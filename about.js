@@ -78,7 +78,7 @@ async function loadFounderDashboard() {
       { label: "Live Booking.com cities", value: liveCities },
     ];
     el.innerHTML = cards
-      .map((card) => `<div class="founder-item"><strong>${card.value}</strong><span>${escapeHtml(card.label)}</span></div>`)
+      .map((card) => `<div class="founder-item"><strong>${escapeHtml(card.value)}</strong><span>${escapeHtml(card.label)}</span></div>`)
       .join("");
   } catch (err) {
     console.error("StayRank About: couldn't load real stats:", err);

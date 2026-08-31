@@ -16,6 +16,7 @@
   --accent-text: #1e3a8a;
   --accent-solid: #1e3a8a;
   --accent-ink: #ffffff;
+  --focus-ring: rgba(37, 68, 160, 0.18);
   --green: #138a62;
   --amber: #8a5200;
   --rose: #b42318;
@@ -46,6 +47,7 @@
   --accent-text: #e8c25c;
   --accent-ink: #1c1400;
   --accent-solid: #d4a017;
+  --focus-ring: rgba(232, 194, 92, 0.25);
   --green: #3ddb9b;
   --amber: #ffb648;
   --rose: #ff8177;
@@ -165,7 +167,7 @@ button {
   height: 48px;
   place-items: center;
   color: var(--ink);
-  background: linear-gradient(135deg, var(--accent), #7c5cff);
+  background: linear-gradient(135deg, var(--accent-strong), var(--accent-solid));
   border-radius: 14px;
   font-weight: 800;
 }
@@ -285,7 +287,7 @@ textarea:focus,
 select:focus,
 input:focus {
   border-color: var(--accent-strong);
-  box-shadow: 0 0 0 3px rgba(138, 99, 240, 0.16);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
 .primary-button {
@@ -293,7 +295,7 @@ input:focus {
   height: 48px;
   margin-top: 12px;
   color: var(--accent-ink);
-  background: var(--accent);
+  background: var(--accent-solid);
   border: 0;
   border-radius: 999px;
   font-weight: 700;
@@ -301,7 +303,7 @@ input:focus {
 }
 
 .primary-button:hover {
-  background: #b998ff;
+  background: var(--accent-strong);
 }
 
 .primary-button:active {
@@ -782,10 +784,12 @@ input[type="range"] {
   top: -11px;
   left: 14px;
   padding: 2px 10px;
-  color: #ffffff;
-  /* accent-solid, not accent-strong: white-on-accent-strong measures ~3.9:1,
-     under WCAG AA's 4.5:1 for this small text; accent-solid measures ~7.1:1.
-     Not accent-text either - see that variable's own comment for why. */
+  /* --accent-ink, not a hardcoded white: --accent-solid is redefined per
+     theme (navy in light, gold in dark), so the text color that stays
+     readable on it must be too - accent-ink resolves to white on navy
+     and near-black on gold, both ~7:1+. Not accent-text either - see
+     that variable's own comment for why. */
+  color: var(--accent-ink);
   background: var(--accent-solid);
   border-radius: 999px;
   font-size: 11px;
@@ -1021,15 +1025,14 @@ input[type="range"] {
   margin-left: 6px;
   padding: 1px 7px;
   border-radius: 999px;
-  /* --accent-solid, not --accent - measured live (see this file's own
-     --accent-solid comment above): --accent is #cdb3ff in BOTH themes,
-     only 1.83:1 against white text, a real WCAG AA failure (needs 4.5:1)
-     that shipped with the Price watches feature. --accent-solid exists
-     specifically for this exact role (white text on a solid badge fill,
-     same as .map-selected/.poi-tab.active) and is deliberately NOT
-     redefined per theme so it stays safe in both. */
+  /* --accent-solid, not --accent - measured live: --accent is #93a9d8 in
+     light mode, a real WCAG AA failure against white text. --accent-solid
+     exists specifically for this role (solid badge fill), and IS
+     redefined per theme (navy in light, gold in dark) - so the text color
+     paired with it must be too. --accent-ink tracks that: white on navy,
+     near-black on gold, same as .map-selected/.poi-tab.active. */
   background: var(--accent-solid);
-  color: white;
+  color: var(--accent-ink);
   font-size: 11px;
   font-weight: 800;
 }
@@ -1436,7 +1439,7 @@ input[type="range"] {
 .ask-hotel-form button {
   padding: 10px 18px;
   color: var(--accent-ink);
-  background: var(--accent);
+  background: var(--accent-solid);
   border: none;
   border-radius: 999px;
   font-weight: 700;
@@ -1676,7 +1679,7 @@ input[type="range"] {
 .refine-form button {
   padding: 8px 16px;
   color: var(--accent-ink);
-  background: var(--accent);
+  background: var(--accent-solid);
   border: none;
   border-radius: 999px;
   font-weight: 700;
@@ -2443,10 +2446,10 @@ dialog::backdrop {
 }
 
 .poi-tab.active {
-  color: #ffffff;
-  /* accent-solid, not accent-strong: white-on-accent-strong measures 4.1:1 at
-     this 13px size, under WCAG AA's 4.5:1 - same fix as .map-selected badge.
-     Not accent-text either - see that variable's own comment for why. */
+  /* accent-ink, not a hardcoded white - see .map-selected::after's comment:
+     accent-solid is redefined per theme, so the paired text color must be
+     too. Not accent-text either - see that variable's own comment for why. */
+  color: var(--accent-ink);
   background: var(--accent-solid);
   border-color: var(--accent-solid);
 }

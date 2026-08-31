@@ -454,6 +454,7 @@ function applySearchState(saved) {
   els.budgetOnlyToggle?.classList.toggle("active", state.budgetOnly);
   els.petFriendlyToggle?.setAttribute("aria-pressed", String(state.petFriendlyOnly));
   els.petFriendlyToggle?.classList.toggle("active", state.petFriendlyOnly);
+  updateFiltersAccordionCount();
 }
 
 // Found via testing: emphatic prompt language ("quiet", "not tiny", "close
@@ -2405,6 +2406,7 @@ function updateFiltersAccordionCount() {
   const count = state.musts.size + changedWeights;
   if (count > 0) {
     badge.textContent = String(count);
+    badge.setAttribute("aria-label", `${count} active`);
     badge.hidden = false;
   } else {
     badge.hidden = true;
@@ -2421,6 +2423,7 @@ async function rankAndRender() {
   syncMinRatingFromPromptMention();
 
   const token = ++requestToken;
+  updateFiltersAccordionCount();
 
   if (!els.city.value.trim()) return;
 
