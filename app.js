@@ -2292,6 +2292,11 @@ function renderScoringModel(rows) {
 }
 
 function renderFounderDashboard(data) {
+  // #founderDashboard lived on index.html until the About-page redesign
+  // moved founder stats to about.html/about.js - guard rather than
+  // remove the call site, since it costs nothing and protects against
+  // any future page that calls rankAndRender() without that element.
+  if (!els.founderDashboard) return;
   const totalHotels = state.cities.reduce((sum, city) => sum + city.hotelCount, 0);
   const cities = state.cities.length;
   const liveCities = state.cities.filter((city) => city.source === "live").length;
