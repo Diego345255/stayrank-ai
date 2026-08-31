@@ -2398,6 +2398,19 @@ function setLoading(isLoading) {
   if (isLoading) els.results.innerHTML = skeletonCards();
 }
 
+function updateFiltersAccordionCount() {
+  const badge = document.getElementById("filtersAccordionCount");
+  if (!badge) return;
+  const changedWeights = Object.keys(defaultWeights).filter((key) => state.weights[key] !== defaultWeights[key]).length;
+  const count = state.musts.size + changedWeights;
+  if (count > 0) {
+    badge.textContent = String(count);
+    badge.hidden = false;
+  } else {
+    badge.hidden = true;
+  }
+}
+
 async function rankAndRender() {
   syncCityFromPromptMention();
   syncNightsFromPromptMention();
@@ -2525,6 +2538,7 @@ async function rankAndRender() {
   await refreshCachedCities();
   if (token !== requestToken) return;
   renderFounderDashboard(data);
+  updateFiltersAccordionCount();
 
   // Scoped to els.results (not document) on purpose: this re-runs on every
   // render, and els.results.innerHTML is freshly replaced each time so its

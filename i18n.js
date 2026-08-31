@@ -387,7 +387,7 @@ const TRANSLATIONS = {
     communityReviewMissingRating: "Pick a star rating first.",
     communityReviewSubmitting: "Posting your review…",
     communityReviewSuccess: "Posted! Thanks for sharing - your story is live above.",
-    guidesLink: "Hotel search guides →",
+    aboutLink: "About StayRank AI →",
   },
   es: {
     skipToResults: "Ir a los resultados",

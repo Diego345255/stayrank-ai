@@ -32,7 +32,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,500;0,600;0,700;1,400&family=Roboto:wght@400;500;700&display=swap" />
-    <link rel="stylesheet" href="styles.css?v=51" />
+    <link rel="stylesheet" href="styles.css?v=52" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
   </head>
@@ -46,8 +46,7 @@
           <div>
             <h1>StayRank AI</h1>
             <p data-i18n="tagline">Hotel rankings from real traveler intent.</p>
-            <a href="methodology.html" class="how-it-works-link">How the ranking works &rarr;</a>
-            <a href="guides/" class="how-it-works-link" data-i18n="guidesLink">Hotel search guides &rarr;</a>
+            <a href="about.html" class="how-it-works-link" data-i18n="aboutLink">About StayRank AI &rarr;</a>
           </div>
           <select id="languageSelect" class="language-select" aria-label="Language"></select>
           <button id="themeToggle" type="button" class="theme-toggle" title="Switch to dark mode" aria-label="Switch to dark mode" aria-pressed="false">
@@ -102,7 +101,12 @@
           </div>
         </section>
 
-        <section class="panel">
+        <details class="panel accordion-panel" id="filtersAccordion">
+          <summary class="accordion-summary">
+            <span data-i18n="filtersAccordionLabel">Hard requirements &amp; priorities</span>
+            <span id="filtersAccordionCount" class="count-pill" hidden></span>
+          </summary>
+        <section class="panel accordion-inner">
           <div class="section-title">
             <h2 data-i18n="hardRequirements">Hard requirements</h2>
             <button id="clearMusts" type="button" data-i18n="clear">Clear</button>
@@ -118,13 +122,14 @@
           </div>
         </section>
 
-        <section class="panel">
+        <section class="panel accordion-inner">
           <div class="section-title">
             <h2 data-i18n="rankingPriorities">Ranking priorities</h2>
             <button id="resetWeights" type="button" data-i18n="reset">Reset</button>
           </div>
           <div id="weights" class="weights"></div>
         </section>
+        </details>
       </aside>
 
       <main class="main">
@@ -207,6 +212,12 @@
         <section class="content-grid">
           <div>
             <div id="recentlyViewedRow" class="recently-viewed-row" role="group" aria-label="Recently viewed hotels" hidden></div>
+            <section class="panel" id="bestTimeSection" hidden>
+              <h2 data-i18n="bestTimeToVisit">Best time to visit</h2>
+              <p class="subline" data-i18n="bestTimeSubline">Real historical temperature and rainfall by month - not a "best month" score, since this app has no real crowd or event data to back one.</p>
+              <div id="bestTimeSummary" class="best-time-summary"></div>
+              <div id="bestTimeGrid" class="best-time-grid"></div>
+            </section>
             <div class="filter-strip" role="group" aria-label="Filter results">
               <button class="filter active" data-filter="all" type="button" aria-pressed="true" data-i18n="filterAll">All</button>
               <button class="filter" data-filter="quiet" type="button" aria-pressed="false" data-i18n="filterQuiet">Quiet</button>
@@ -241,50 +252,11 @@
               <div id="neighborhoodInsights" class="insight-list"></div>
             </section>
 
-            <section class="panel" id="bestTimeSection" hidden>
-              <h2 data-i18n="bestTimeToVisit">Best time to visit</h2>
-              <p class="subline" data-i18n="bestTimeSubline">Real historical temperature and rainfall by month - not a "best month" score, since this app has no real crowd or event data to back one.</p>
-              <div id="bestTimeSummary" class="best-time-summary"></div>
-              <div id="bestTimeGrid" class="best-time-grid"></div>
-            </section>
-
             <section class="panel">
               <h2 data-i18n="decisionModel">Decision model</h2>
               <div id="scoringModel" class="model-list"></div>
             </section>
 
-            <section class="panel">
-              <h2 data-i18n="whyBeats">Why this beats a typical booking site</h2>
-              <ul class="trust-list">
-                <li data-i18n-html="trust1"><strong>No fake urgency.</strong> Never "Only 1 room left!" - UK/EU regulators have flagged that exact practice on major OTAs since 2024.</li>
-                <li data-i18n-html="trust2"><strong>Real reviews only.</strong> When live data is on, every review comes straight from Booking.com, unedited - nothing purchased, filtered, or fabricated.</li>
-                <li data-i18n-html="trust3"><strong>Zero ads.</strong> No sponsored placements bend the ranking - every hotel is scored by the same model you can inspect below.</li>
-                <li data-i18n-html="trust4"><strong>No notification spam.</strong> No push notifications, no re-engagement emails, ever.</li>
-                <li data-i18n-html="trust5"><strong>Transparent AI.</strong> Every match reason is grounded in the hotel's actual data, not a black-box score.</li>
-                <li data-i18n-html="trust6"><strong>All-in pricing.</strong> The nightly price shown is the price - no fees revealed only at checkout.</li>
-                <li data-i18n-html="trust7"><strong>Accessibility, only when confirmed.</strong> The ♿ Accessible filter only shows hotels with a specifically reported wheelchair-accessible room or facility (real Hotelbeds data) - we never treat "not reported" as "not accessible," unlike listings travelers have reported as advertising accessibility they didn't actually have.</li>
-                <li data-i18n-html="trust8"><strong>No AI review smoothing.</strong> "What guests actually mention" counts real keyword mentions across a hotel's own unedited reviews - never an AI-generated summary, which a July 2026 consumer-watchdog investigation found could soften or omit real complaints like food poisoning and hygiene failures on a major review site.</li>
-              </ul>
-            </section>
-
-            <section class="panel">
-              <h2 data-i18n="founderDashboard">Founder dashboard</h2>
-              <div id="founderDashboard" class="founder-grid"></div>
-            </section>
-
-            <section class="panel advertise-panel">
-              <h2 data-i18n="advertiseTitle">Advertise on StayRank AI</h2>
-              <p class="subline" data-i18n="advertiseIntro">StayRank AI is an independently built, ad-free ranking engine - no placement here ever changes a hotel's score. If your travel brand, hotel group, or tourism board wants to reach travelers through a separate, clearly labeled spot (never blended into the ranking itself), get in touch.</p>
-              <ul class="trust-list">
-                <li data-i18n-html="advertiseTrust1"><strong>Never a ranking boost.</strong> Sponsorship can buy visibility, never a better score.</li>
-                <li data-i18n-html="advertiseTrust2"><strong>Always labeled.</strong> Any paid placement is marked "Sponsored" - no exceptions.</li>
-                <li data-i18n-html="advertiseTrust3"><strong>Real reply, real person.</strong> This is solo-run - your email goes straight to the founder.</li>
-              </ul>
-              <div class="card-actions">
-                <a class="book" href="mailto:wwm.8195967@gmail.com?subject=Advertising%20on%20StayRank%20AI" data-i18n="advertiseContactButton">✉️ Contact about advertising</a>
-                <button type="button" class="link-button" id="copyAdvertiseEmailButton" data-email="wwm.8195967@gmail.com" data-i18n="copyEmail">📋 Copy email</button>
-              </div>
-            </section>
           </aside>
         </section>
 
@@ -454,7 +426,7 @@
       already defaults to same-origin relative paths in that case.
       <script>window.STAYRANK_API_BASE = "https://your-backend-domain.example.com";</script>
     -->
-    <script src="i18n.js?v=42"></script>
+    <script src="i18n.js?v=43"></script>
     <script src="app.js?v=177" defer></script>
   </body>
 </html>
