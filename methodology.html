@@ -23,39 +23,39 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,500;0,600;0,700;1,400&family=Roboto:wght@400;500;700&display=swap" />
     <style>
       :root {
-        --ink: #2a182e;
-        --muted: #7a6b7d;
-        --line: #d4d1d5;
-        --soft: #f3f1ee;
+        --ink: #0f172a;
+        --muted: #475569;
+        --line: #cbd5e1;
+        --soft: #f1f5f9;
         --paper: #ffffff;
-        --cream: #f7f6f3;
-        --accent: #cdb3ff;
-        --accent-tint: #f2ecff;
-        --accent-strong: #8a63f0;
-        --accent-text: #6d28d9;
-        --accent-solid: #6d28d9;
+        --cream: #f8fafc;
+        --accent: #93a9d8;
+        --accent-tint: #e7ecf9;
+        --accent-strong: #2544a0;
+        --accent-text: #1e3a8a;
+        --accent-solid: #1e3a8a;
         --green: #138a62;
         --green-tint: #ddf7ed;
         --green-text: #075e44;
         --amber: #8a5200;
         --amber-tint: #fff3d8;
-        --shadow: 0 18px 42px rgba(42, 24, 46, 0.1);
+        --shadow: 0 18px 42px rgba(15, 23, 42, 0.1);
       }
       :root[data-theme="dark"] {
-        --ink: #f1eaf7;
-        --muted: #a99bb5;
-        --line: #423a4c;
-        --soft: #241c2c;
-        --paper: #1c1622;
-        --cream: #15101a;
-        --accent: #cdb3ff;
-        --accent-tint: #2f2440;
-        --accent-strong: #b79bff;
-        --accent-text: #d8c6ff;
-        --accent-solid: #cdb3ff;
+        --ink: #f1f5f9;
+        --muted: #94a3b8;
+        --line: #334155;
+        --soft: #1e293b;
+        --paper: #111c33;
+        --cream: #0b1220;
+        --accent: #d4a017;
+        --accent-tint: #2a2410;
+        --accent-strong: #e8c25c;
+        --accent-text: #e8c25c;
+        --accent-solid: #d4a017;
         --green: #3ddb9b;
         --green-tint: #123829;
         --green-text: #3ddb9b;
@@ -68,9 +68,10 @@
         margin: 0;
         background: var(--cream);
         color: var(--ink);
-        font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+        font-family: "Roboto", system-ui, -apple-system, sans-serif;
         line-height: 1.6;
       }
+      h1, h2, .brand strong { font-family: "Newsreader", Georgia, "Times New Roman", serif; }
       a { color: var(--accent-text); }
       .wrap { max-width: 780px; margin: 0 auto; padding: 0 24px 96px; }
       header.top {
