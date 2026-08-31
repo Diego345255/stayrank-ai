@@ -388,6 +388,7 @@ const TRANSLATIONS = {
     communityReviewSubmitting: "Posting your review…",
     communityReviewSuccess: "Posted! Thanks for sharing - your story is live above.",
     aboutLink: "About StayRank AI →",
+    filtersAccordionLabel: "Hard requirements & priorities",
   },
   es: {
     skipToResults: "Ir a los resultados",
