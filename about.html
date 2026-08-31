@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About StayRank AI</title>
+    <meta name="description" content="Why StayRank AI exists, what it promises never to do, real usage stats, and how to reach the person who built it." />
+    <meta property="og:title" content="About StayRank AI" />
+    <meta property="og:description" content="No fake urgency, no paid placement, no invented reviews - and what that actually means in practice." />
+    <meta property="og:type" content="website" />
+    <link rel="canonical" href="https://clearstay.online/about.html" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%8F%3C/text%3E%3C/svg%3E" />
+    <script>
+      (function () {
+        try {
+          const saved = localStorage.getItem("stayrank-theme");
+          const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {}
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,500;0,600;0,700;1,400&family=Roboto:wght@400;500;700&display=swap" />
+    <style>
+      :root {
+        --ink: #0f172a; --muted: #475569; --line: #cbd5e1; --soft: #f1f5f9; --paper: #ffffff; --cream: #f8fafc;
+        --accent: #93a9d8; --accent-tint: #e7ecf9; --accent-strong: #2544a0; --accent-text: #1e3a8a; --accent-solid: #1e3a8a;
+        --green: #138a62; --green-tint: #ddf7ed; --green-text: #075e44;
+        --amber: #8a5200; --amber-tint: #fff3d8; --shadow: 0 18px 42px rgba(15, 23, 42, 0.1);
+      }
+      :root[data-theme="dark"] {
+        --ink: #f1f5f9; --muted: #94a3b8; --line: #334155; --soft: #1e293b; --paper: #111c33; --cream: #0b1220;
+        --accent: #d4a017; --accent-tint: #2a2410; --accent-strong: #e8c25c; --accent-text: #e8c25c; --accent-solid: #d4a017;
+        --green: #3ddb9b; --green-tint: #123829; --green-text: #3ddb9b;
+        --amber: #ffb648; --amber-tint: #3a2a10; --shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--cream); color: var(--ink); font-family: "Roboto", system-ui, -apple-system, sans-serif; line-height: 1.6; }
+      h1, h2, .brand strong { font-family: "Newsreader", Georgia, "Times New Roman", serif; }
+      a { color: var(--accent-text); }
+      .wrap { max-width: 740px; margin: 0 auto; padding: 0 24px 96px; }
+      header.top { display: flex; align-items: center; justify-content: space-between; padding: 28px 24px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+      .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); }
+      .brand-mark { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--accent-strong), var(--accent-solid)); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; flex-shrink: 0; }
+      .brand strong { font-size: 17px; display: block; }
+      .backlink { font-size: 14px; font-weight: 600; text-decoration: none; color: var(--accent-text); white-space: nowrap; }
+      .eyebrow { font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-text); margin: 32px 0 14px; }
+      h1 { font-size: clamp(28px, 5vw, 38px); line-height: 1.15; margin: 0 0 18px; letter-spacing: -0.01em; }
+      .dek { font-size: 17px; color: var(--muted); margin: 0 0 40px; max-width: 62ch; }
+      h2 { font-size: 21px; margin: 44px 0 14px; letter-spacing: -0.01em; }
+      p { margin: 0 0 14px; }
+      .trust-list { list-style: none; padding: 0; margin: 18px 0; display: grid; gap: 10px; }
+      .trust-list li { padding: 14px 16px; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; font-size: 14.5px; box-shadow: var(--shadow); }
+      .trust-list li strong { color: var(--ink); }
+      .founder-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 18px 0; }
+      .founder-item { padding: 14px 16px; background: linear-gradient(160deg, var(--accent-tint), var(--soft)); border: 1px solid var(--line); border-radius: 16px; }
+      .founder-item strong { display: block; font-size: 22px; font-family: "Newsreader", Georgia, serif; margin-bottom: 4px; }
+      .founder-item span { color: var(--muted); font-size: 13px; }
+      .founder-loading { color: var(--muted); font-size: 14px; }
+      .advertise-card { padding: 20px 22px; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow); margin: 18px 0; }
+      .card-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+      .card-actions a, .card-actions button { padding: 12px 20px; border-radius: 999px; font-weight: 700; text-decoration: none; cursor: pointer; font: inherit; font-size: 14px; }
+      .card-actions a.book { background: var(--accent-solid); color: #fff; border: none; }
+      :root[data-theme="dark"] .card-actions a.book { color: #1c1400; }
+      .card-actions button.link-button { background: none; border: 1px solid var(--line); color: var(--accent-text); }
+      .go-deeper { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin: 18px 0; }
+      .go-deeper a { display: block; text-decoration: none; color: var(--ink); background: var(--paper); border: 1px solid var(--line); border-radius: 16px; padding: 18px 20px; box-shadow: var(--shadow); }
+      .go-deeper a strong { display: block; margin-bottom: 4px; font-family: "Newsreader", Georgia, serif; font-size: 16px; }
+      .go-deeper a span { color: var(--muted); font-size: 13.5px; }
+      #toastContainer { position: fixed; top: 16px; right: 16px; z-index: 999; display: flex; flex-direction: column; gap: 8px; }
+      .toast { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 10px; background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow); font-size: 13.5px; color: var(--ink); }
+      .toast-dismiss { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 14px; margin-left: 4px; }
+      footer.note { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); }
+      @media (max-width: 640px) { .founder-grid, .go-deeper { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <div id="toastContainer"></div>
+    <header class="top">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">SR</span>
+        <strong>StayRank AI</strong>
+      </a>
+      <a class="backlink" href="/">&larr; Back to the app</a>
+    </header>
+
+    <div class="wrap">
+      <p class="eyebrow">About</p>
+      <h1>Every ranking, fully documented.</h1>
+      <p class="dek">StayRank AI is a solo-built hotel-ranking prototype with one rule that never bends: a hotel's position is a function of real data and your stated priorities, never a payment.</p>
+
+      <h2>Why this beats a typical booking site</h2>
+      <ul class="trust-list">
+        <li><strong>No fake urgency.</strong> Never "Only 1 room left!" - UK/EU regulators have flagged that exact practice on major OTAs since 2024.</li>
+        <li><strong>Real reviews only.</strong> When live data is on, every review comes straight from Booking.com, unedited - nothing purchased, filtered, or fabricated.</li>
+        <li><strong>Zero ads.</strong> No sponsored placements bend the ranking - every hotel is scored by the same model you can inspect.</li>
+        <li><strong>No notification spam.</strong> No push notifications, no re-engagement emails, ever.</li>
+        <li><strong>Transparent AI.</strong> Every match reason is grounded in the hotel's actual data, not a black-box score.</li>
+        <li><strong>All-in pricing.</strong> The nightly price shown is the price - no fees revealed only at checkout.</li>
+        <li><strong>Accessibility, only when confirmed.</strong> The &#9855; Accessible filter only shows hotels with a specifically reported wheelchair-accessible room or facility (real Hotelbeds data) - we never treat "not reported" as "not accessible."</li>
+        <li><strong>No AI review smoothing.</strong> "What guests actually mention" counts real keyword mentions across a hotel's own unedited reviews - never an AI-generated summary.</li>
+      </ul>
+
+      <h2>Real usage, right now</h2>
+      <div id="founderDashboardAbout" class="founder-grid">
+        <p class="founder-loading">Loading real stats…</p>
+      </div>
+
+      <h2>Advertise on StayRank AI</h2>
+      <div class="advertise-card">
+        <p>StayRank AI is an independently built, ad-free ranking engine - no placement here ever changes a hotel's score. If your travel brand, hotel group, or tourism board wants to reach travelers through a separate, clearly labeled spot (never blended into the ranking itself), get in touch.</p>
+        <ul class="trust-list">
+          <li><strong>Never a ranking boost.</strong> Sponsorship can buy visibility, never a better score.</li>
+          <li><strong>Always labeled.</strong> Any paid placement is marked "Sponsored" - no exceptions.</li>
+          <li><strong>Real reply, real person.</strong> This is solo-run - your email goes straight to the founder.</li>
+        </ul>
+        <div class="card-actions">
+          <a class="book" href="mailto:wwm.8195967@gmail.com?subject=Advertising%20on%20StayRank%20AI">&#9993;&#65039; Contact about advertising</a>
+          <button type="button" class="link-button" id="copyAdvertiseEmailButtonAbout" data-email="wwm.8195967@gmail.com">&#128203; Copy email</button>
+        </div>
+      </div>
+
+      <h2>Go deeper</h2>
+      <div class="go-deeper">
+        <a href="methodology.html">
+          <strong>How the ranking works &rarr;</strong>
+          <span>The full scoring formula, weight table, and real-fact-vs-estimate breakdown.</span>
+        </a>
+        <a href="guides/">
+          <strong>Hotel search guides &rarr;</strong>
+          <span>Specific, honest answers to specific hotel-search questions.</span>
+        </a>
+      </div>
+
+      <footer class="note">
+        StayRank AI is a prototype MVP at <a href="https://clearstay.online">clearstay.online</a>.
+      </footer>
+    </div>
+
+    <script src="about.js?v=1"></script>
+  </body>
+</html>
