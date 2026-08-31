@@ -1,0 +1,20 @@
+1
+00:00:00,100 --> 00:00:02,435
+Traveling for business instead of leisure?
+
+2
+00:00:02,385 --> 00:00:03,670
+Pick your trip type.
+
+3
+00:00:03,670 --> 00:00:10,805
+StayRank AI shifts the real ranking weights, wifi and transit matter more, and shows you exactly what changed.
+
+4
+00:00:10,805 --> 00:00:12,173
+StayRank AI.
+
+5
+00:00:12,173 --> 00:00:14,779
+Weights that shift, and show their work.
+

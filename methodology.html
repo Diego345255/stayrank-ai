@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>How StayRank AI ranks hotels — Methodology</title>
+    <meta name="description" content="How StayRank AI actually scores and ranks hotels: the weighted metrics, the real data sources behind each one, what's an honest estimate vs. a fabricated number, and what the app never does." />
+    <meta property="og:title" content="How StayRank AI ranks hotels" />
+    <meta property="og:description" content="A plain-language breakdown of the scoring model, the real data sources behind it, and what StayRank AI never fabricates." />
+    <meta property="og:type" content="article" />
+    <link rel="canonical" href="https://clearstay.online/methodology.html" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%8F%3C/text%3E%3C/svg%3E" />
+    <script>
+      // Same pre-paint theme sync as index.html - keep in sync with that
+      // file's copy so navigating between the two never flashes themes.
+      (function () {
+        try {
+          const saved = localStorage.getItem("stayrank-theme");
+          const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {}
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
+    <style>
+      :root {
+        --ink: #2a182e;
+        --muted: #7a6b7d;
+        --line: #d4d1d5;
+        --soft: #f3f1ee;
+        --paper: #ffffff;
+        --cream: #f7f6f3;
+        --accent: #cdb3ff;
+        --accent-tint: #f2ecff;
+        --accent-strong: #8a63f0;
+        --accent-text: #6d28d9;
+        --accent-solid: #6d28d9;
+        --green: #138a62;
+        --green-tint: #ddf7ed;
+        --green-text: #075e44;
+        --amber: #8a5200;
+        --amber-tint: #fff3d8;
+        --shadow: 0 18px 42px rgba(42, 24, 46, 0.1);
+      }
+      :root[data-theme="dark"] {
+        --ink: #f1eaf7;
+        --muted: #a99bb5;
+        --line: #423a4c;
+        --soft: #241c2c;
+        --paper: #1c1622;
+        --cream: #15101a;
+        --accent: #cdb3ff;
+        --accent-tint: #2f2440;
+        --accent-strong: #b79bff;
+        --accent-text: #d8c6ff;
+        --accent-solid: #cdb3ff;
+        --green: #3ddb9b;
+        --green-tint: #123829;
+        --green-text: #3ddb9b;
+        --amber: #ffb648;
+        --amber-tint: #3a2a10;
+        --shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: var(--cream);
+        color: var(--ink);
+        font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+        line-height: 1.6;
+      }
+      a { color: var(--accent-text); }
+      .wrap { max-width: 780px; margin: 0 auto; padding: 0 24px 96px; }
+      header.top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 28px 24px;
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 8px;
+      }
+      .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); }
+      .brand-mark {
+        width: 40px; height: 40px; border-radius: 12px;
+        background: linear-gradient(135deg, var(--accent-strong), var(--accent-solid));
+        color: #fff; display: flex; align-items: center; justify-content: center;
+        font-weight: 800; font-size: 17px; flex-shrink: 0;
+      }
+      .brand strong { font-size: 17px; display: block; }
+      .backlink {
+        font-size: 14px; font-weight: 600; text-decoration: none;
+        color: var(--accent-text); white-space: nowrap;
+      }
+      .eyebrow {
+        font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+        color: var(--accent-text); margin: 0 0 14px;
+      }
+      h1 {
+        font-size: clamp(28px, 5vw, 38px); line-height: 1.15; margin: 0 0 18px; letter-spacing: -0.01em;
+      }
+      .dek { font-size: 17px; color: var(--muted); margin: 0 0 40px; max-width: 62ch; }
+      h2 { font-size: 21px; margin: 48px 0 14px; letter-spacing: -0.01em; }
+      h3 { font-size: 15.5px; margin: 22px 0 6px; }
+      p { margin: 0 0 14px; }
+      .card {
+        background: var(--paper); border: 1px solid var(--line); border-radius: 14px;
+        padding: 20px 22px; margin: 16px 0; box-shadow: var(--shadow);
+      }
+      .weight-table { width: 100%; border-collapse: collapse; margin: 18px 0; font-size: 14.5px; }
+      .weight-table th, .weight-table td {
+        text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line);
+      }
+      .weight-table th { color: var(--muted); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.04em; }
+      .weight-table td.num { font-variant-numeric: tabular-nums; text-align: right; font-weight: 700; }
+      .source-grid { display: grid; gap: 14px; margin: 18px 0; }
+      .source-row {
+        display: grid; grid-template-columns: 150px 1fr; gap: 16px;
+        padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper);
+      }
+      .source-row .metric { font-weight: 700; font-size: 14.5px; }
+      .source-row .metric .badge {
+        display: block; margin-top: 6px; font-size: 11px; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.04em; padding: 3px 8px;
+        border-radius: 5px; width: fit-content;
+      }
+      .badge.real { background: var(--green-tint); color: var(--green-text); }
+      .badge.estimate { background: var(--amber-tint); color: var(--amber); }
+      .source-row p { margin: 0; font-size: 14.5px; color: var(--muted); }
+      .source-row p a { color: var(--accent-text); }
+      .never-list { list-style: none; padding: 0; margin: 18px 0; display: grid; gap: 10px; }
+      .never-list li {
+        display: flex; gap: 10px; align-items: flex-start; font-size: 15px;
+        background: var(--paper); border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px;
+      }
+      .never-list li::before { content: "✕"; color: var(--amber); font-weight: 800; flex-shrink: 0; }
+      details {
+        border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; margin: 10px 0; background: var(--paper);
+      }
+      details summary { font-weight: 700; cursor: pointer; font-size: 15.5px; }
+      details p { margin: 10px 0 0; color: var(--muted); font-size: 14.5px; }
+      code {
+        font-family: ui-monospace, "SF Mono", Consolas, monospace; font-size: 0.88em;
+        background: var(--soft); padding: 1px 6px; border-radius: 4px;
+      }
+      footer.note { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); }
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How does StayRank AI rank hotels?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Each hotel gets a weighted score across metrics like quiet, cleanliness, transit access, room size, and value. The weighted metric score is blended 80/20 with a semantic text-match score comparing your free-text trip description against each hotel's real neighborhood data, tags, and review text. Price relative to your stated budget then adjusts the score up or down. The full weight table and blend formula are published on this page, not hidden."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is StayRank AI's hotel ranking a paid placement?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. StayRank AI has no ad or paid-placement system. A hotel's position is entirely a function of its metric scores against your stated priorities and budget, computed the same way for every hotel with no manual override."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does StayRank AI use real data or AI-generated estimates?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Both, and it discloses which is which. Hotel identity, coordinates, and photos come from live booking-data APIs or the Hotelbeds Content API. Nearest transit stop, noise context, walking routes, and weather come from free public data sources (OpenStreetMap Overpass, OSRM, Open-Meteo). Metric scores like QUIET or TRANSIT are honestly-disclosed estimates built from that real data, not invented numbers, and the app never fabricates a review, a price, or a crowd/event score it has no real source for."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How does StayRank AI understand a free-text trip description?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "An LLM (OpenAI-compatible) parses the description into weighted intent when configured. If the LLM call fails for any reason (no key, rate limit, timeout, malformed response), the search automatically falls back to a rule-based keyword and TF-IDF parser instead of failing the search - the fallback is seamless and the user is never shown an error for it."
+          }
+        }
+      ]
+    }
+    </script>
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">SR</span>
+        <strong>StayRank AI</strong>
+      </a>
+      <a class="backlink" href="/">&larr; Back to the app</a>
+    </header>
+
+    <div class="wrap">
+      <p class="eyebrow">Methodology</p>
+      <h1>How StayRank AI actually ranks a hotel</h1>
+      <p class="dek">Not a black-box recommendation. Every score below is a documented formula over real data - this page shows the weights, the sources, and exactly what's an honest estimate versus a fact.</p>
+
+      <h2>The scoring formula</h2>
+      <p>Every hotel gets a <strong>metric score</strong>: each of its metrics (quiet, cleanliness, transit, room size, value, and a couple/family/business fit score) is multiplied by a weight, summed, and divided by the total weight. Your traveler type shifts those weights automatically before anything else runs.</p>
+
+      <div class="card">
+        <table class="weight-table">
+          <thead><tr><th>Metric</th><th class="num">Base weight</th></tr></thead>
+          <tbody>
+            <tr><td>Quiet</td><td class="num">20</td></tr>
+            <tr><td>Cleanliness</td><td class="num">18</td></tr>
+            <tr><td>Transit access</td><td class="num">18</td></tr>
+            <tr><td>Value</td><td class="num">14</td></tr>
+            <tr><td>Room size</td><td class="num">12</td></tr>
+            <tr><td>Couple fit</td><td class="num">8</td></tr>
+            <tr><td>Family fit</td><td class="num">4</td></tr>
+            <tr><td>Breakfast</td><td class="num">3</td></tr>
+            <tr><td>Wi-Fi</td><td class="num">3</td></tr>
+          </tbody>
+        </table>
+        <p style="margin-bottom:0; font-size: 14px;">Picking <strong>Couple</strong> adds +10 to couple fit; <strong>Family</strong> adds +12 to family fit; <strong>Business</strong> adds +8 Wi-Fi / +4 transit; <strong>First-time</strong> adds +8 transit. Anything your free-text description implies as a priority (e.g. "quiet is essential") boosts that metric's weight too, on a continuous 0&ndash;18 scale when the LLM parser is active, or a flat +8 from the rule-based fallback.</p>
+      </div>
+
+      <p>That weighted metric score is then blended with a <strong>semantic text-match score</strong> - a real TF-IDF cosine-similarity comparison between your exact wording and each hotel's neighborhood description, tags, strengths, and review text - so phrasing that isn't a recognized keyword can still move the ranking:</p>
+      <div class="card" style="font-family: ui-monospace, monospace; font-size: 14px;">
+        final score = (metric score &times; 0.8) + (text-match score &times; 0.2)
+      </div>
+      <p>Price is applied last: hotels over your stated budget lose up to 24 points scaled to how far over they are; hotels under budget gain up to 8. Nothing about this formula changes hotel-by-hotel - it's the same function for all of them.</p>
+
+      <h2>What's a real fact vs. an honest estimate</h2>
+      <p>Metrics like <code>QUIET 86/100</code> are disclosed estimates, not measurements - there's no honest source for a real decibel reading per hotel. Where a real, checkable fact exists instead, StayRank AI shows that fact alongside the estimate rather than replacing one with a guess:</p>
+
+      <div class="source-grid">
+        <div class="source-row">
+          <div class="metric">Nearest transit stop<span class="badge real">Real fact</span></div>
+          <p>The actual named nearest station/stop and straight-line distance, via OpenStreetMap's Overpass API - the same public data Google Hotels and Booking.com's "X min walk to [station]" line draws from.</p>
+        </div>
+        <div class="source-row">
+          <div class="metric">Noise context<span class="badge real">Real fact</span></div>
+          <p>No honest decibel data exists per hotel, so nothing is invented. Instead: a real count of nearby nightlife venues and nearby major roads from OpenStreetMap, shown as plain-language context alongside the raw counts.</p>
+        </div>
+        <div class="source-row">
+          <div class="metric">Walking routes<span class="badge real">Real fact</span></div>
+          <p>Real street-network routing via OSRM's public routing engine - not a straight-line guess - for distance/time to a landmark you search for.</p>
+        </div>
+        <div class="source-row">
+          <div class="metric">Weather / best time to visit<span class="badge real">Real fact</span></div>
+          <p>Live forecast via Open-Meteo for trips within ~15 days; beyond that horizon, real historical averages for the matching dates, clearly flagged as historical rather than presented as a forecast for your specific trip.</p>
+        </div>
+        <div class="source-row">
+          <div class="metric">Exchange rates<span class="badge real">Real fact</span></div>
+          <p>Live daily rates from the European Central Bank via the free Frankfurter API - not a fixed or estimated conversion.</p>
+        </div>
+        <div class="source-row">
+          <div class="metric">Hotel identity &amp; photos<span class="badge real">Real fact</span></div>
+          <p>Name, coordinates, address, star category, and photos come from live booking-data APIs, or the Hotelbeds Content API as an independent fallback when the primary source's rate limit is hit for a city - never a generated placeholder.</p>
+        </div>
+        <div class="source-row">
+          <div class="metric">QUIET / TRANSIT / VALUE scores<span class="badge estimate">Disclosed estimate</span></div>
+          <p>Weighted-formula outputs built from the real signals above plus review text, explicitly labeled as a computed score - never presented as a measured fact.</p>
+        </div>
+      </div>
+
+      <h2>What StayRank AI never does</h2>
+      <ul class="never-list">
+        <li>Accept payment for a higher ranking, ever - there is no ad or paid-placement system in the code.</li>
+        <li>Invent a guest review, a review count, or soften a real one - the "Guest Favorite" badge is computed only from real review volume and score.</li>
+        <li>Show a crowd-level or "best time" popularity score - no honest source exists for that, so it's simply not shown.</li>
+        <li>Store your card number - checkout runs through Stripe's own hosted Checkout and Billing Portal pages, which keeps this app entirely out of PCI scope.</li>
+        <li>Fail your search silently - if the LLM intent parser is unavailable for any reason, it falls back to a rule-based parser automatically instead of erroring.</li>
+      </ul>
+
+      <h2>Common questions</h2>
+      <details>
+        <summary>Is this a paid placement or ad system?</summary>
+        <p>No. There is no mechanism in the app for a hotel to pay for a better score or position. The formula above runs identically for every hotel.</p>
+      </details>
+      <details>
+        <summary>What happens if the AI intent parser is down?</summary>
+        <p>The search doesn't fail. Every LLM call is wrapped so any failure (missing key, rate limit, timeout, malformed response) falls back to a rule-based keyword and TF-IDF parser, seamlessly, on the same request.</p>
+      </details>
+      <details>
+        <summary>Why don't you show a "best time to visit" crowd score?</summary>
+        <p>Because there's no honest data source behind one. The Best Time panel shows real historical temperature and rainfall by month instead of a fabricated popularity number.</p>
+      </details>
+
+      <footer class="note">
+        This page documents the scoring logic as implemented in the current build of StayRank AI at <a href="https://clearstay.online">clearstay.online</a>, a prototype MVP. It will be updated if the model changes.
+      </footer>
+    </div>
+  </body>
+</html>

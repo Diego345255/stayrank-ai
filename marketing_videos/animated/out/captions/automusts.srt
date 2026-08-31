@@ -1,0 +1,16 @@
+1
+00:00:00,100 --> 00:00:04,782
+Ever type walking distance to subway and wonder what that actually did to your results?
+
+2
+00:00:04,732 --> 00:00:10,439
+StayRank AI shows you exactly which requirement it silently applied, and lets you uncheck it.
+
+3
+00:00:10,439 --> 00:00:11,807
+StayRank AI.
+
+4
+00:00:11,807 --> 00:00:14,696
+Never a silent filter, always undoable.
+

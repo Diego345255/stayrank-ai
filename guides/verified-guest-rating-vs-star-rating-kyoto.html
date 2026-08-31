@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Verified Guest Rating vs. Star Rating for Kyoto Hotels - What's the Difference?</title>
+    <meta name="description" content="A hotel's star rating is usually self-reported by the property. Here's how StayRank AI shows a separate, real guest-review-based rating for Kyoto hotels when one exists, instead of blending the two into one number." />
+    <meta property="og:title" content="Verified Guest Rating vs. Star Rating for Kyoto Hotels" />
+    <meta property="og:description" content="Self-reported star category and real guest-review rating, shown separately - never blended into one number, and no badge without real review volume behind it." />
+    <meta property="og:type" content="article" />
+    <link rel="canonical" href="https://clearstay.online/guides/verified-guest-rating-vs-star-rating-kyoto.html" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%8F%3C/text%3E%3C/svg%3E" />
+    <script>
+      (function () {
+        try {
+          const saved = localStorage.getItem("stayrank-theme");
+          const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {}
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
+    <style>
+      :root {
+        --ink: #2a182e; --muted: #7a6b7d; --line: #d4d1d5; --soft: #f3f1ee; --paper: #ffffff; --cream: #f7f6f3;
+        --accent: #cdb3ff; --accent-tint: #f2ecff; --accent-strong: #8a63f0; --accent-text: #6d28d9; --accent-solid: #6d28d9;
+        --green: #138a62; --green-tint: #ddf7ed; --green-text: #075e44;
+        --amber: #8a5200; --amber-tint: #fff3d8; --shadow: 0 18px 42px rgba(42, 24, 46, 0.1);
+      }
+      :root[data-theme="dark"] {
+        --ink: #f1eaf7; --muted: #a99bb5; --line: #423a4c; --soft: #241c2c; --paper: #1c1622; --cream: #15101a;
+        --accent: #cdb3ff; --accent-tint: #2f2440; --accent-strong: #b79bff; --accent-text: #d8c6ff; --accent-solid: #cdb3ff;
+        --green: #3ddb9b; --green-tint: #123829; --green-text: #3ddb9b;
+        --amber: #ffb648; --amber-tint: #3a2a10; --shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--cream); color: var(--ink); font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif; line-height: 1.6; }
+      a { color: var(--accent-text); }
+      .wrap { max-width: 740px; margin: 0 auto; padding: 0 24px 96px; }
+      header.top { display: flex; align-items: center; justify-content: space-between; padding: 28px 24px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+      .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); }
+      .brand-mark { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--accent-strong), var(--accent-solid)); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; flex-shrink: 0; }
+      .brand strong { font-size: 17px; display: block; }
+      .backlink { font-size: 14px; font-weight: 600; text-decoration: none; color: var(--accent-text); white-space: nowrap; }
+      .breadcrumb { font-size: 13px; color: var(--muted); margin: 24px 0 6px; }
+      .breadcrumb a { color: var(--muted); }
+      .eyebrow { font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-text); margin: 0 0 14px; }
+      h1 { font-size: clamp(26px, 5vw, 36px); line-height: 1.15; margin: 0 0 18px; letter-spacing: -0.01em; }
+      .dek { font-size: 17px; color: var(--muted); margin: 0 0 32px; max-width: 62ch; }
+      h2 { font-size: 20px; margin: 40px 0 12px; letter-spacing: -0.01em; }
+      p { margin: 0 0 14px; }
+      .card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; margin: 16px 0; box-shadow: var(--shadow); }
+      .cta-card { background: linear-gradient(160deg, var(--accent-tint), var(--paper)); border: 1px solid var(--line); border-radius: 16px; padding: 24px 26px; margin: 28px 0; text-align: center; }
+      .cta-button { display: inline-block; margin-top: 10px; padding: 13px 26px; background: var(--accent-solid); color: #fff; text-decoration: none; font-weight: 700; border-radius: 999px; }
+      :root[data-theme="dark"] .cta-button { color: #1c1622; }
+      .source-grid { display: grid; gap: 14px; margin: 18px 0; }
+      .source-row { display: grid; grid-template-columns: 150px 1fr; gap: 16px; padding: 16px 18px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
+      .source-row .metric { font-weight: 700; font-size: 14.5px; }
+      .source-row .metric .badge { display: block; margin-top: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; padding: 3px 8px; border-radius: 5px; width: fit-content; }
+      .badge.real { background: var(--green-tint); color: var(--green-text); }
+      .badge.estimate { background: var(--amber-tint); color: var(--amber); }
+      .source-row p { margin: 0; font-size: 14.5px; color: var(--muted); }
+      details { border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; margin: 10px 0; background: var(--paper); }
+      details summary { font-weight: 700; cursor: pointer; font-size: 15px; }
+      details p { margin: 10px 0 0; color: var(--muted); font-size: 14.5px; }
+      footer.note { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); }
+      .related { list-style: none; padding: 0; margin: 14px 0; }
+      .related li { margin-bottom: 8px; }
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What's the difference between a hotel's star rating and its guest rating on StayRank AI?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Star rating is the property's own self-reported class (e.g. a 4-star category). When real guest-review data exists for a hotel, StayRank AI shows that as a separate, real rating out of 10 - never blended into one combined number, so you can see whether guest experience actually matches the star category." }
+        },
+        {
+          "@type": "Question",
+          "name": "What does the 'Guest Favorite' badge actually require?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A real review count of at least 20 and a real guest rating of at least 9 out of 10, computed only from genuine review volume and score - never StayRank AI's own derived match score, and never shown for hotels without enough real review data to back it." }
+        }
+      ]
+    }
+    </script>
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">SR</span>
+        <strong>StayRank AI</strong>
+      </a>
+      <a class="backlink" href="/">&larr; Back to the app</a>
+    </header>
+
+    <div class="wrap">
+      <p class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="index.html">Guides</a> &rsaquo; Verified guest rating vs. star rating</p>
+      <p class="eyebrow">Kyoto &middot; Real vs. self-reported</p>
+      <h1>Why a hotel's guest rating can differ from its star rating</h1>
+      <p class="dek">A hotel's star rating is typically the property's own self-assigned class. Its guest rating, when real review data exists, is a completely different number from a different source - and the gap between the two can tell you more than either alone.</p>
+
+      <h2>Two different facts, kept separate</h2>
+      <div class="source-grid">
+        <div class="source-row">
+          <div class="metric">Star rating<span class="badge estimate">Self-reported</span></div>
+          <p>The property's own declared class (e.g. 3, 4, or 5 star) - a category, not a guest-experience score.</p>
+        </div>
+        <div class="source-row">
+          <div class="metric">Guest rating<span class="badge real">Real, when available</span></div>
+          <p>A live, review-based rating out of 10 from the connected booking-data source, shown only when real review data exists for that hotel - never estimated or backfilled with a guess.</p>
+        </div>
+      </div>
+      <p>StayRank AI never blends these into one combined figure. A 5-star property with a middling guest rating, or a modest 3-star property with an excellent one, both stay visible as two honest, separate facts.</p>
+
+      <h2>What the "Guest Favorite" badge actually requires</h2>
+      <div class="card">
+        <p style="margin-bottom:0;">At least <strong>20 real reviews</strong> and a real guest rating of <strong>9 or higher out of 10</strong> - computed strictly from real review volume and score. It's never shown for a curated or procedurally generated listing with no real review data behind it, and it's never based on StayRank AI's own computed match score, which measures something different entirely (fit to your search, not guest satisfaction).</p>
+      </div>
+
+      <div class="cta-card">
+        <strong>See real guest ratings alongside star ratings for Kyoto right now</strong>
+        <p style="margin: 6px 0 0;">Opens the live app and searches Kyoto - open any hotel's detail page to see both ratings shown separately.</p>
+        <a class="cta-button" href="/?city=Kyoto&prompt=well%20reviewed%20hotel%20in%20a%20good%20location">Search Kyoto hotels &rarr;</a>
+      </div>
+
+      <h2>Common questions</h2>
+      <details>
+        <summary>Does StayRank AI ever invent a guest rating when real data isn't available?</summary>
+        <p>No - if no real review data exists for a hotel, no guest rating is shown for it. Only the star rating (when reported) appears.</p>
+      </details>
+      <details>
+        <summary>Is the Guest Favorite badge the same as StayRank AI's own match score?</summary>
+        <p>No - the match score measures fit to your specific search; the Guest Favorite badge is computed only from real, independent review volume and score, unrelated to how well a hotel matches what you asked for.</p>
+      </details>
+
+      <h2>Related guides</h2>
+      <ul class="related">
+        <li><a href="pet-friendly-hotels-kyoto.html">Pet-friendly hotels in Kyoto, without the fee surprise at check-in</a></li>
+        <li><a href="how-to-search-hotels-plain-english.html">How to search hotels by describing your trip in plain English</a></li>
+        <li><a href="../methodology.html">How the full ranking formula works</a></li>
+      </ul>
+
+      <footer class="note">
+        Part of StayRank AI's guides on searching for a hotel by what actually matters to you, using real, checkable data. See the <a href="index.html">full guide index</a> or <a href="../methodology.html">the scoring methodology</a>.
+      </footer>
+    </div>
+  </body>
+</html>

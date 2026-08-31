@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>StayRank AI</title>
+    <meta name="description" content="StayRank AI ranks real hotels against what you actually asked for - quiet, transit access, budget, and more - with an explainable, inspectable score instead of a black-box recommendation. No fake urgency, no fabricated reviews, no ads." />
+    <meta property="og:title" content="StayRank AI" />
+    <meta property="og:description" content="Explainable hotel ranking from real data - see exactly why each hotel matched, not just that it did." />
+    <meta property="og:type" content="website" />
+    <!-- Simple inline SVG favicon (no external asset dependency) - a bed
+         icon fits "StayRank" without implying a real logo/brand mark that
+         doesn't exist yet. -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%8F%3C/text%3E%3C/svg%3E" />
+    <script>
+      // Runs synchronously, before any CSS paints, so the page never
+      // flashes light-then-dark (or vice versa) on load. Keep this in
+      // sync with THEME_KEY and the same fallback logic in app.js's
+      // initTheme() - duplicated here on purpose, since a deferred script
+      // would run too late to prevent the flash it's meant to avoid.
+      (function () {
+        try {
+          const saved = localStorage.getItem("stayrank-theme");
+          const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {
+          // localStorage/matchMedia unavailable (e.g. privacy mode) - just
+          // let the CSS's own light-mode default apply.
+        }
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
+    <link rel="stylesheet" href="styles.css?v=50" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#results" data-i18n="skipToResults">Skip to results</a>
+    <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Trip preferences">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">SR</div>
+          <div>
+            <h1>StayRank AI</h1>
+            <p data-i18n="tagline">Hotel rankings from real traveler intent.</p>
+            <a href="methodology.html" class="how-it-works-link">How the ranking works &rarr;</a>
+            <a href="guides/" class="how-it-works-link" data-i18n="guidesLink">Hotel search guides &rarr;</a>
+          </div>
+          <select id="languageSelect" class="language-select" aria-label="Language"></select>
+          <button id="themeToggle" type="button" class="theme-toggle" title="Switch to dark mode" aria-label="Switch to dark mode" aria-pressed="false">
+            <span class="theme-toggle-icon" aria-hidden="true">🌙</span>
+          </button>
+        </div>
+
+        <section class="panel">
+          <label for="tripPrompt" data-i18n="describeTrip">Describe the trip</label>
+          <textarea id="tripPrompt" rows="8">I am going to Tokyo with my girlfriend for 5 nights. Budget under $190 per night. I want a quiet, clean hotel close to subway, good for first-time visitors, not in a loud nightlife area, with rooms that do not feel tiny.</textarea>
+          <button id="rankButton" class="primary-button" type="button" data-i18n="rankHotels">Rank hotels</button>
+        </section>
+
+        <section class="panel compact-panel">
+          <div class="field-grid">
+            <label>
+              <span data-i18n="cityLabel">City</span>
+              <input id="citySelect" type="text" list="cityOptions" placeholder="Search any city worldwide" data-i18n-placeholder="cityPlaceholder" autocomplete="off" value="Tokyo" />
+              <datalist id="cityOptions"></datalist>
+            </label>
+          </div>
+          <div id="recentCitiesRow" class="recent-cities-row" role="group" aria-label="Recently searched cities" hidden></div>
+          <div class="field-grid">
+            <label>
+              <span data-i18n="budgetLabel">Budget / night</span>
+              <input id="budgetInput" type="number" value="190" min="60" max="800" />
+            </label>
+            <label>
+              <span data-i18n="nightsLabel">Nights</span>
+              <input id="nightsInput" type="number" value="5" min="1" max="30" />
+            </label>
+            <label>
+              <span data-i18n="checkInLabel">Check-in (optional)</span>
+              <input id="checkInDateInput" type="date" />
+              <small id="checkInCountdown" class="subline" aria-live="polite"></small>
+            </label>
+            <label>
+              <span data-i18n="guestsLabel">Guests</span>
+              <input id="guestsInput" type="number" value="2" min="1" max="8" />
+            </label>
+          </div>
+          <label>
+            <span data-i18n="landmarkLabel">Near a landmark or address (optional)</span>
+            <input id="landmarkInput" type="text" placeholder="e.g. Eiffel Tower, or an address" data-i18n-placeholder="landmarkPlaceholder" autocomplete="off" />
+          </label>
+          <p id="landmarkStatus" class="landmark-status" aria-live="polite"></p>
+          <div class="chip-row" aria-label="Traveler type" role="group">
+            <button class="chip active" data-persona="first-time" type="button" aria-pressed="true" data-i18n="personaFirstTime">First-time</button>
+            <button class="chip" data-persona="couple" type="button" aria-pressed="false" data-i18n="personaCouple">Couple</button>
+            <button class="chip" data-persona="family" type="button" aria-pressed="false" data-i18n="personaFamily">Family</button>
+            <button class="chip" data-persona="business" type="button" aria-pressed="false" data-i18n="personaBusiness">Business</button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <h2 data-i18n="hardRequirements">Hard requirements</h2>
+            <button id="clearMusts" type="button" data-i18n="clear">Clear</button>
+          </div>
+          <p class="subline" id="autoMustsNote" aria-live="polite" hidden></p>
+          <div class="check-grid" id="mustHaves">
+            <label><input type="checkbox" value="quiet" /> <span data-i18n="mustQuiet">Quiet sleep</span> <span class="auto-must-tag" hidden data-i18n="autoTag">auto</span></label>
+            <label><input type="checkbox" value="transit" /> <span data-i18n="mustTransit">Near transit</span> <span class="auto-must-tag" hidden data-i18n="autoTag">auto</span></label>
+            <label><input type="checkbox" value="space" /> <span data-i18n="mustSpace">Larger rooms</span> <span class="auto-must-tag" hidden data-i18n="autoTag">auto</span></label>
+            <label><input type="checkbox" value="family" /> <span data-i18n="mustFamily">Family friendly</span> <span class="auto-must-tag" hidden data-i18n="autoTag">auto</span></label>
+            <label><input type="checkbox" value="breakfast" /> <span data-i18n="mustBreakfast">Good breakfast</span> <span class="auto-must-tag" hidden data-i18n="autoTag">auto</span></label>
+            <label><input type="checkbox" value="wifi" /> <span data-i18n="mustWifi">Strong Wi-Fi</span> <span class="auto-must-tag" hidden data-i18n="autoTag">auto</span></label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <h2 data-i18n="rankingPriorities">Ranking priorities</h2>
+            <button id="resetWeights" type="button" data-i18n="reset">Reset</button>
+          </div>
+          <div id="weights" class="weights"></div>
+        </section>
+      </aside>
+
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow" data-i18n="prototypeMvp">Prototype MVP</p>
+            <h2 data-i18n="personalizedRanking">Personalized hotel ranking</h2>
+          </div>
+          <div class="toolbar">
+            <select id="sortSelect" aria-label="Sort results">
+              <option value="match" data-i18n="sortBestMatch">Best match</option>
+              <option value="price" data-i18n="sortLowestPrice">Lowest price</option>
+              <option value="confidence" data-i18n="sortHighestConfidence">Highest confidence</option>
+              <option value="rating" data-i18n="sortGuestRating">Guest rating</option>
+              <option value="distance" data-i18n="sortNearestLandmark">Nearest to landmark</option>
+            </select>
+            <select id="ratingSelect" aria-label="Minimum rating">
+              <option value="0" data-i18n="ratingAny">Any rating</option>
+              <option value="4.3" data-i18n="rating43">4.3+ rating</option>
+              <option value="4.5" data-i18n="rating45">4.5+ rating</option>
+              <option value="4.7" data-i18n="rating47">4.7+ rating</option>
+            </select>
+            <select id="starRatingSelect" aria-label="Minimum star class">
+              <option value="0" data-i18n="starAny">Any star class</option>
+              <option value="3" data-i18n="star3">3+ stars</option>
+              <option value="4" data-i18n="star4">4+ stars</option>
+              <option value="5" data-i18n="star5">5 stars</option>
+            </select>
+            <select id="neighborhoodFilterSelect" aria-label="Neighborhood" title="Only show hotels in one specific neighborhood of this city - same idea as Kayak/Google Hotels' neighborhood filter" data-i18n-title="neighborhoodFilterTitle">
+              <option value="" data-i18n="neighborhoodAny">All neighborhoods</option>
+            </select>
+            <button id="accessibleToggle" type="button" class="toggle-chip" aria-pressed="false" title="Only show hotels with a real, positively-reported accessibility facility (wheelchair-accessible room/bathroom, etc.) - never excludes a hotel just because accessibility data wasn't reported" data-i18n-title="accessibleToggleTitle"><span aria-hidden="true">&#9855;</span> <span data-i18n="accessibleToggle">Accessible</span></button>
+            <button id="budgetOnlyToggle" type="button" class="toggle-chip" aria-pressed="false" title="Hide any hotel priced above your budget field, instead of just ranking it lower" data-i18n-title="budgetOnlyToggleTitle"><span aria-hidden="true">💰</span> <span data-i18n="budgetOnlyToggle">Within budget only</span></button>
+            <button id="petFriendlyToggle" type="button" class="toggle-chip" aria-pressed="false" title="Only show hotels with a real, positively-reported pet-friendly policy - never excludes a hotel just because pet data wasn't reported" data-i18n-title="petFriendlyToggleTitle"><span aria-hidden="true">🐾</span> <span data-i18n="petFriendlyToggle">Pet friendly</span></button>
+            <button id="viewMapButton" type="button" class="mobile-only" data-i18n="viewMap">📍 View map</button>
+            <button id="compareButton" type="button" data-i18n="compareShortlist">Compare shortlist</button>
+            <button id="priceWatchesButton" type="button" title="Every hotel that's appeared in your search results on this device, with the real price change since you first saw it - never a prediction, only what StayRank has actually observed" data-i18n-title="priceWatchesButtonTitle">📉 <span data-i18n="priceWatches">Price watches</span><span id="priceWatchesCount" class="count-pill" hidden></span></button>
+            <button id="shareSearchButton" type="button" title="Copy a link that reopens this exact search - city, prompt, filters and all" data-i18n-title="shareSearchTitle">🔗 <span data-i18n="shareSearch">Share search</span></button>
+            <button id="exportButton" type="button" data-i18n="exportPlan">Export plan</button>
+            <button id="exportKmlButton" type="button" data-i18n="exportKml">🗺️ Export map (.kml)</button>
+            <button id="syncButton" type="button" data-i18n="syncLiveData">Sync live data</button>
+            <button id="resetAllButton" type="button" title="Clear every filter, weight, and preference back to defaults" data-i18n-title="resetAllTitle" data-i18n="resetAll">Reset all</button>
+          </div>
+          <p class="subline" id="autoFiltersNote" aria-live="polite" hidden></p>
+        </header>
+
+        <section class="insights">
+          <div>
+            <span class="metric-label" data-i18n="detectedIntent">Detected intent</span>
+            <strong id="intentSummary">Quiet, subway access, clean rooms, couple trip</strong>
+          </div>
+          <div>
+            <span class="metric-label" data-i18n="hotelsAnalyzed">Hotels analyzed</span>
+            <strong id="hotelCount">12</strong>
+          </div>
+          <div>
+            <span class="metric-label" data-i18n="bestFit">Best fit</span>
+            <strong id="bestFit">Calculating</strong>
+          </div>
+          <div>
+            <span class="metric-label" data-i18n="shortlist">Shortlist</span>
+            <strong id="shortlistCount">0</strong>
+          </div>
+          <div>
+            <span class="metric-label" data-i18n="hotelCost">Hotel cost</span>
+            <strong id="tripEstimate">$0</strong>
+          </div>
+        </section>
+
+        <div id="vibeCallout" class="vibe-callout" hidden></div>
+
+        <div id="refineBar" class="refine-bar" hidden>
+          <div id="refineChips" class="refine-chips"></div>
+          <form id="refineForm" class="refine-form">
+            <input type="text" id="refineInput" maxlength="80" placeholder="e.g. cheaper, closer to downtown, more family-friendly" data-i18n-placeholder="refinePlaceholder" aria-label="Refine results" />
+            <button type="submit" data-i18n="refineButton">Refine</button>
+          </form>
+        </div>
+
+        <section class="content-grid">
+          <div>
+            <div id="recentlyViewedRow" class="recently-viewed-row" role="group" aria-label="Recently viewed hotels" hidden></div>
+            <div class="filter-strip" role="group" aria-label="Filter results">
+              <button class="filter active" data-filter="all" type="button" aria-pressed="true" data-i18n="filterAll">All</button>
+              <button class="filter" data-filter="quiet" type="button" aria-pressed="false" data-i18n="filterQuiet">Quiet</button>
+              <button class="filter" data-filter="value" type="button" aria-pressed="false" data-i18n="filterValue">Value</button>
+              <button class="filter" data-filter="space" type="button" aria-pressed="false" data-i18n="filterSpace">Larger rooms</button>
+              <button class="filter" data-filter="transit" type="button" aria-pressed="false" data-i18n="filterTransit">Transit</button>
+              <button class="filter" data-filter="family" type="button" aria-pressed="false" data-i18n="filterFamily">Family</button>
+              <button class="filter" data-filter="business" type="button" aria-pressed="false" data-i18n="filterBusiness">Work</button>
+              <button class="filter" data-filter="cancellation" type="button" aria-pressed="false" data-i18n="filterCancellation">Free cancellation</button>
+              <button class="filter" data-filter="deals" type="button" aria-pressed="false" data-i18n="filterDeals">Deals</button>
+            </div>
+            <div id="results" class="results" aria-live="polite"></div>
+          </div>
+
+          <aside class="decision-panel">
+            <div class="map-card">
+              <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=900&q=80" alt="Tokyo city skyline at night" />
+              <div class="map-overlay">
+                <span id="mapCityLabel">Tokyo</span>
+                <strong>Neighborhood fit map</strong>
+                <span id="citySourceBadge" class="source-badge"></span>
+              </div>
+            </div>
+
+            <section class="panel">
+              <h2 data-i18n="mapView">Map view</h2>
+              <div id="hotelMap" class="hotel-map"></div>
+            </section>
+
+            <section class="panel">
+              <h2 data-i18n="neighborhoodRead">Neighborhood read</h2>
+              <div id="neighborhoodInsights" class="insight-list"></div>
+            </section>
+
+            <section class="panel" id="bestTimeSection" hidden>
+              <h2 data-i18n="bestTimeToVisit">Best time to visit</h2>
+              <p class="subline" data-i18n="bestTimeSubline">Real historical temperature and rainfall by month - not a "best month" score, since this app has no real crowd or event data to back one.</p>
+              <div id="bestTimeSummary" class="best-time-summary"></div>
+              <div id="bestTimeGrid" class="best-time-grid"></div>
+            </section>
+
+            <section class="panel">
+              <h2 data-i18n="decisionModel">Decision model</h2>
+              <div id="scoringModel" class="model-list"></div>
+            </section>
+
+            <section class="panel">
+              <h2 data-i18n="whyBeats">Why this beats a typical booking site</h2>
+              <ul class="trust-list">
+                <li data-i18n-html="trust1"><strong>No fake urgency.</strong> Never "Only 1 room left!" - UK/EU regulators have flagged that exact practice on major OTAs since 2024.</li>
+                <li data-i18n-html="trust2"><strong>Real reviews only.</strong> When live data is on, every review comes straight from Booking.com, unedited - nothing purchased, filtered, or fabricated.</li>
+                <li data-i18n-html="trust3"><strong>Zero ads.</strong> No sponsored placements bend the ranking - every hotel is scored by the same model you can inspect below.</li>
+                <li data-i18n-html="trust4"><strong>No notification spam.</strong> No push notifications, no re-engagement emails, ever.</li>
+                <li data-i18n-html="trust5"><strong>Transparent AI.</strong> Every match reason is grounded in the hotel's actual data, not a black-box score.</li>
+                <li data-i18n-html="trust6"><strong>All-in pricing.</strong> The nightly price shown is the price - no fees revealed only at checkout.</li>
+                <li data-i18n-html="trust7"><strong>Accessibility, only when confirmed.</strong> The ♿ Accessible filter only shows hotels with a specifically reported wheelchair-accessible room or facility (real Hotelbeds data) - we never treat "not reported" as "not accessible," unlike listings travelers have reported as advertising accessibility they didn't actually have.</li>
+                <li data-i18n-html="trust8"><strong>No AI review smoothing.</strong> "What guests actually mention" counts real keyword mentions across a hotel's own unedited reviews - never an AI-generated summary, which a July 2026 consumer-watchdog investigation found could soften or omit real complaints like food poisoning and hygiene failures on a major review site.</li>
+              </ul>
+            </section>
+
+            <section class="panel">
+              <h2 data-i18n="founderDashboard">Founder dashboard</h2>
+              <div id="founderDashboard" class="founder-grid"></div>
+            </section>
+
+            <section class="panel advertise-panel">
+              <h2 data-i18n="advertiseTitle">Advertise on StayRank AI</h2>
+              <p class="subline" data-i18n="advertiseIntro">StayRank AI is an independently built, ad-free ranking engine - no placement here ever changes a hotel's score. If your travel brand, hotel group, or tourism board wants to reach travelers through a separate, clearly labeled spot (never blended into the ranking itself), get in touch.</p>
+              <ul class="trust-list">
+                <li data-i18n-html="advertiseTrust1"><strong>Never a ranking boost.</strong> Sponsorship can buy visibility, never a better score.</li>
+                <li data-i18n-html="advertiseTrust2"><strong>Always labeled.</strong> Any paid placement is marked "Sponsored" - no exceptions.</li>
+                <li data-i18n-html="advertiseTrust3"><strong>Real reply, real person.</strong> This is solo-run - your email goes straight to the founder.</li>
+              </ul>
+              <div class="card-actions">
+                <a class="book" href="mailto:wwm.8195967@gmail.com?subject=Advertising%20on%20StayRank%20AI" data-i18n="advertiseContactButton">✉️ Contact about advertising</a>
+                <button type="button" class="link-button" id="copyAdvertiseEmailButton" data-email="wwm.8195967@gmail.com" data-i18n="copyEmail">📋 Copy email</button>
+              </div>
+            </section>
+          </aside>
+        </section>
+
+        <section id="tripPlannerSection" class="trip-planner">
+          <div class="trip-planner-head">
+            <div>
+              <p class="eyebrow" data-i18n="tripPlannerPro">Trip Planner Pro</p>
+              <h2 data-i18n="tripPlannerHeadline">Weather, flights, and a full itinerary - not just hotels</h2>
+            </div>
+            <div id="proBillingWidget" class="pro-billing-widget">
+              <button id="unlockProButton" type="button" class="primary-button" data-i18n="unlockPro" hidden>Unlock Pro (prototype)</button>
+              <form id="proSubscribeForm" class="pro-subscribe-form" hidden>
+                <label class="visually-hidden" for="proEmailInput" data-i18n="proEmailLabel">Email for your subscription</label>
+                <input id="proEmailInput" type="email" required data-i18n-placeholder="proEmailPlaceholder" placeholder="you@example.com" />
+                <button type="submit" id="proSubscribeButton" class="primary-button">
+                  <span data-i18n="proSubscribeButton">Subscribe</span> <span id="proPriceLabel"></span>
+                </button>
+              </form>
+              <button id="proRestoreButton" type="button" class="link-button" data-i18n="proRestoreAccess" hidden>Already subscribed? Restore access</button>
+              <div id="proActiveBadgeRow" class="pro-active-row" hidden>
+                <span class="pro-active-badge">✓ <span data-i18n="proActiveBadge">Pro active</span></span>
+                <button id="manageSubscriptionButton" type="button" class="link-button" data-i18n="manageSubscription">Manage subscription</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="tripPlannerLocked" class="panel">
+            <p data-i18n="lockedIntro">Trip Planner Pro turns your ranked hotel into a full day-by-day plan: a real weather forecast, landscape/culture/entertainment picks near your hotel, and a flight time + fare estimate from wherever you're starting.</p>
+            <ul class="trust-list">
+              <li data-i18n-html="lockedTrust1"><strong>Real weather</strong>, not a guess - pulled live from Open-Meteo for your actual trip dates.</li>
+              <li data-i18n-html="lockedTrust2"><strong>Real places</strong> - nature, culture, nightlife, and family spots sourced from OpenStreetMap, not invented.</li>
+              <li data-i18n-html="lockedTrust3"><strong>Honest flight estimates</strong> - distance-based time/fare ranges, clearly labeled as estimates, never presented as a live quote.</li>
+            </ul>
+            <p class="subline" id="proBillingNote"><em data-i18n="prototypeNote">Prototype note: this "unlock" is a local demo toggle - no account, no payment method, nothing is charged.</em></p>
+          </div>
+
+          <div id="tripPlannerUnlocked" class="trip-planner-body" hidden>
+            <div class="panel trip-planner-controls no-print">
+              <div class="field-grid">
+                <label>
+                  <span data-i18n="tripStartDate">Trip start date (departure)</span>
+                  <input id="tripStartDate" type="date" />
+                </label>
+                <label>
+                  <span data-i18n="tripPlanNightsLabel">How many nights?</span>
+                  <input id="tripPlanNightsInput" type="number" min="1" max="30" />
+                </label>
+                <label>
+                  <span data-i18n="flyingFrom">Flying from (optional)</span>
+                  <input id="originCityInput" type="text" placeholder="e.g. New York" autocomplete="off" />
+                </label>
+                <label>
+                  <span data-i18n="flyingTo">Flying to</span>
+                  <input id="tripPlanDestinationDisplay" type="text" readonly title="Set above in the main hotel search - this panel plans a trip around that same destination" data-i18n-title="flyingToTitle" />
+                </label>
+                <label>
+                  <span data-i18n="anchorToHotel">Anchor to hotel</span>
+                  <select id="tripPlanHotelSelect"></select>
+                </label>
+              </div>
+              <p id="tripPlanSummaryLine" class="subline" aria-live="polite"></p>
+              <p class="subline" data-i18n="anchorNote">Distances and walking times below are measured from whichever hotel you pick here - shortlist a hotel first for a specific choice, or leave the default (your current top match).</p>
+              <div class="card-actions">
+                <button id="buildTripPlanButton" class="primary-button" type="button" data-i18n="buildTripPlan">Build my trip plan</button>
+                <button id="printPlanButton" type="button" data-i18n="printPlan">🖨️ Print / Save as PDF</button>
+                <button id="exportIcsButton" type="button" class="no-print" data-i18n="exportIcs">📅 Add to Calendar (.ics)</button>
+              </div>
+              <p id="tripPlanStatus" class="landmark-status" aria-live="polite"></p>
+              <p id="tripPlanAnchorNote" class="subline" hidden></p>
+              <p id="tripPlanStaleNote" class="landmark-status landmark-status-error" aria-live="polite" hidden></p>
+            </div>
+
+            <div id="printHeader" class="print-only"></div>
+
+            <div id="flightEstimateCard" class="panel" hidden></div>
+
+            <div id="weatherPanel" class="panel" hidden>
+              <h2 data-i18n="weatherForecast">Weather forecast</h2>
+              <p id="destinationTimezoneLine" class="subline"></p>
+              <div id="weatherDays" class="weather-days"></div>
+            </div>
+
+            <div id="poiPanel" class="panel no-print" hidden>
+              <h2 data-i18n="placesToAdd">Places to add to your itinerary</h2>
+              <div id="poiTabs" class="poi-tabs" role="group" aria-label="Place categories"></div>
+              <div id="poiList" class="poi-list"></div>
+            </div>
+
+            <div id="itineraryPanel" class="panel" hidden>
+              <div class="section-title">
+                <h2 data-i18n="dayByDayItinerary">Your day-by-day itinerary</h2>
+                <button id="regenerateItineraryButton" type="button" class="no-print" data-i18n="regenerate">🔄 Regenerate</button>
+              </div>
+              <p class="subline no-print" data-i18n="itineraryIntro">Auto-built from real places near your hotel - swap anything below, or tell the AI assistant what you'd rather have.</p>
+              <div id="itineraryAiRow" class="itinerary-ai-row no-print">
+                <input id="itineraryAiInput" type="text" placeholder="e.g. more relaxed, less walking on day 2, add a beach day" data-i18n-placeholder="itineraryAiPlaceholder" autocomplete="off" />
+                <button id="itineraryAiButton" type="button" class="secondary-button" data-i18n="askAiAdjust">Ask AI to adjust</button>
+              </div>
+              <p id="itineraryAiStatus" class="landmark-status" aria-live="polite"></p>
+              <div id="itineraryDays" class="itinerary-days"></div>
+            </div>
+
+            <div id="budgetPanel" class="panel" hidden>
+              <h2 data-i18n="tripBudget">Trip budget</h2>
+              <p class="subline" data-i18n="tripBudgetIntro">Wanderlog and TripIt don't have a built-in budget tracker - this sums real numbers already on this page, plus your own daily-spend estimate.</p>
+              <div class="field-grid">
+                <label>
+                  <span data-i18n="dailySpendLabel">Estimated daily spending (food, activities, transit)</span>
+                  <input id="dailySpendInput" type="number" min="0" step="5" value="60" />
+                </label>
+                <label>
+                  <span data-i18n="homeCurrencyLabel">Also show total in (optional, 3-letter code)</span>
+                  <input id="homeCurrencyInput" type="text" maxlength="3" placeholder="e.g. EUR, GBP, JPY" data-i18n-placeholder="homeCurrencyPlaceholder" autocomplete="off" />
+                </label>
+              </div>
+              <div id="budgetBreakdown" class="budget-breakdown"></div>
+            </div>
+
+            <div id="packingPanel" class="panel" hidden>
+              <h2 data-i18n="smartPackingList">Smart packing list</h2>
+              <p class="subline" data-i18n="packingIntro">Generated from your actual weather forecast, not a generic checklist.</p>
+              <ul id="packingList" class="packing-items"></ul>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="compareDialog">
+      <div class="dialog-head">
+        <h2 data-i18n="shortlistComparison">Shortlist comparison</h2>
+        <button id="closeCompare" type="button" aria-label="Close comparison">×</button>
+      </div>
+      <div id="compareTable" class="compare-table"></div>
+    </dialog>
+
+    <dialog id="priceWatchesDialog">
+      <div class="dialog-head">
+        <h2 data-i18n="priceWatches">Price watches</h2>
+        <button id="closePriceWatches" type="button" aria-label="Close price watches">×</button>
+      </div>
+      <p class="subline" data-i18n="priceWatchesIntro">Every hotel that's appeared in your search results on this device is tracked here - the price you first saw vs. the most recent price StayRank has confirmed. A real observed change, never a prediction, and never sent to you - check back here any time you like.</p>
+      <div id="priceWatchesList" class="price-watches-list"></div>
+    </dialog>
+
+    <dialog id="detailDialog">
+      <div class="dialog-head">
+        <h2 id="detailTitle" data-i18n="hotelDetails">Hotel details</h2>
+        <button id="closeDetail" type="button" aria-label="Close details">×</button>
+      </div>
+      <div id="detailBody" class="detail-body"></div>
+    </dialog>
+
+    <dialog id="photoLightbox" class="photo-lightbox">
+      <button id="closeLightbox" type="button" class="lightbox-close" aria-label="Close photo viewer">×</button>
+      <button id="lightboxPrev" type="button" class="lightbox-nav lightbox-prev" aria-label="Previous photo">&#8249;</button>
+      <img id="lightboxImage" alt="" />
+      <button id="lightboxNext" type="button" class="lightbox-nav lightbox-next" aria-label="Next photo">&#8250;</button>
+      <p id="lightboxCounter" class="lightbox-counter" aria-live="polite"></p>
+    </dialog>
+
+    <!--
+      Only needed if the backend is deployed on a DIFFERENT domain than
+      this page (split frontend/backend hosting). Leave commented out for
+      local dev and for same-domain deploys (backend serving these static
+      files itself, or a reverse proxy routing /api/* here) - app.js
+      already defaults to same-origin relative paths in that case.
+      <script>window.STAYRANK_API_BASE = "https://your-backend-domain.example.com";</script>
+    -->
+    <script src="i18n.js?v=42"></script>
+    <script src="app.js?v=177" defer></script>
+  </body>
+</html>

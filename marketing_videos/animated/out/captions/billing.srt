@@ -1,0 +1,20 @@
+1
+00:00:00,100 --> 00:00:02,164
+Worried about handing over your card number?
+
+2
+00:00:02,114 --> 00:00:05,286
+Trip Planner Pro uses real Stripe hosted checkout.
+
+3
+00:00:05,286 --> 00:00:11,312
+StayRank AI never sees your card number, ever, and you can cancel anytime from your own billing portal.
+
+4
+00:00:11,312 --> 00:00:12,680
+StayRank AI.
+
+5
+00:00:12,680 --> 00:00:15,121
+Secure billing, real Stripe checkout.
+

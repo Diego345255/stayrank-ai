@@ -1,0 +1,16 @@
+1
+00:00:00,100 --> 00:00:02,600
+Lost track of which hotels you already checked?
+
+2
+00:00:02,550 --> 00:00:07,750
+StayRank AI remembers every hotel you've viewed, so you can pick up right where you left off.
+
+3
+00:00:07,750 --> 00:00:09,118
+StayRank AI.
+
+4
+00:00:09,118 --> 00:00:11,630
+Recently viewed, always saved.
+

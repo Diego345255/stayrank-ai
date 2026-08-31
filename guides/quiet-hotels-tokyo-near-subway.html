@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Quiet Hotels in Tokyo Near a Subway Station (Real Data, Not Guesses)</title>
+    <meta name="description" content="How to actually find a quiet Tokyo hotel that's still near a subway station - using real OpenStreetMap nightlife/road counts and real nearest-station data, not a guessed 'peaceful' label." />
+    <meta property="og:title" content="Quiet Hotels in Tokyo Near a Subway Station" />
+    <meta property="og:description" content="Real nightlife-venue and major-road counts, plus the real nearest station and distance - not a guessed quiet score." />
+    <meta property="og:type" content="article" />
+    <link rel="canonical" href="https://clearstay.online/guides/quiet-hotels-tokyo-near-subway.html" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%9B%8F%3C/text%3E%3C/svg%3E" />
+    <script>
+      (function () {
+        try {
+          const saved = localStorage.getItem("stayrank-theme");
+          const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch {}
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" />
+    <style>
+      :root {
+        --ink: #2a182e; --muted: #7a6b7d; --line: #d4d1d5; --soft: #f3f1ee; --paper: #ffffff; --cream: #f7f6f3;
+        --accent: #cdb3ff; --accent-tint: #f2ecff; --accent-strong: #8a63f0; --accent-text: #6d28d9; --accent-solid: #6d28d9;
+        --green: #138a62; --green-tint: #ddf7ed; --green-text: #075e44;
+        --amber: #8a5200; --amber-tint: #fff3d8; --shadow: 0 18px 42px rgba(42, 24, 46, 0.1);
+      }
+      :root[data-theme="dark"] {
+        --ink: #f1eaf7; --muted: #a99bb5; --line: #423a4c; --soft: #241c2c; --paper: #1c1622; --cream: #15101a;
+        --accent: #cdb3ff; --accent-tint: #2f2440; --accent-strong: #b79bff; --accent-text: #d8c6ff; --accent-solid: #cdb3ff;
+        --green: #3ddb9b; --green-tint: #123829; --green-text: #3ddb9b;
+        --amber: #ffb648; --amber-tint: #3a2a10; --shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; background: var(--cream); color: var(--ink); font-family: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif; line-height: 1.6; }
+      a { color: var(--accent-text); }
+      .wrap { max-width: 740px; margin: 0 auto; padding: 0 24px 96px; }
+      header.top { display: flex; align-items: center; justify-content: space-between; padding: 28px 24px; border-bottom: 1px solid var(--line); margin-bottom: 8px; }
+      .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink); }
+      .brand-mark { width: 40px; height: 40px; border-radius: 12px; background: linear-gradient(135deg, var(--accent-strong), var(--accent-solid)); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; flex-shrink: 0; }
+      .brand strong { font-size: 17px; display: block; }
+      .backlink { font-size: 14px; font-weight: 600; text-decoration: none; color: var(--accent-text); white-space: nowrap; }
+      .breadcrumb { font-size: 13px; color: var(--muted); margin: 24px 0 6px; }
+      .breadcrumb a { color: var(--muted); }
+      .eyebrow { font-size: 12.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-text); margin: 0 0 14px; }
+      h1 { font-size: clamp(26px, 5vw, 36px); line-height: 1.15; margin: 0 0 18px; letter-spacing: -0.01em; }
+      .dek { font-size: 17px; color: var(--muted); margin: 0 0 32px; max-width: 62ch; }
+      h2 { font-size: 20px; margin: 40px 0 12px; letter-spacing: -0.01em; }
+      p { margin: 0 0 14px; }
+      .card { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 20px 22px; margin: 16px 0; box-shadow: var(--shadow); }
+      .cta-card { background: linear-gradient(160deg, var(--accent-tint), var(--paper)); border: 1px solid var(--line); border-radius: 16px; padding: 24px 26px; margin: 28px 0; text-align: center; }
+      .cta-button { display: inline-block; margin-top: 10px; padding: 13px 26px; background: var(--accent-solid); color: #fff; text-decoration: none; font-weight: 700; border-radius: 999px; }
+      :root[data-theme="dark"] .cta-button { color: #1c1622; }
+      .neighborhood-grid { display: grid; gap: 12px; margin: 18px 0; }
+      .neighborhood-row { display: grid; grid-template-columns: 170px 1fr; gap: 16px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--paper); }
+      .neighborhood-row strong { font-size: 14.5px; }
+      .neighborhood-row .tag { display: inline-block; margin-top: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em; padding: 3px 8px; border-radius: 5px; }
+      .tag.good { background: var(--green-tint); color: var(--green-text); }
+      .tag.caution { background: var(--amber-tint); color: var(--amber); }
+      .neighborhood-row p { margin: 0; font-size: 14px; color: var(--muted); }
+      details { border: 1px solid var(--line); border-radius: 12px; padding: 14px 18px; margin: 10px 0; background: var(--paper); }
+      details summary { font-weight: 700; cursor: pointer; font-size: 15px; }
+      details p { margin: 10px 0 0; color: var(--muted); font-size: 14.5px; }
+      footer.note { margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--muted); }
+      .related { list-style: none; padding: 0; margin: 14px 0; }
+      .related li { margin-bottom: 8px; }
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "How can I find a quiet hotel in Tokyo that's still near a subway station?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Search with 'quiet' as a priority and check the noise context on each hotel's detail page - it shows a real count of nearby nightlife venues and major roads from OpenStreetMap, plus the real named nearest station and walking distance from Overpass, so you can see both facts side by side instead of trusting a single vague 'quiet' label." }
+        },
+        {
+          "@type": "Question",
+          "name": "Which Tokyo neighborhoods are quiet but still convenient for transit?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Kanda/Otemachi and parts of Ueno tend to score well on both fronts in practice - business districts with fast subway access but few nightlife venues nearby. Shinjuku and parts of Ginza/Yurakucho are the opposite tradeoff: excellent transit, more nightlife noise after dark." }
+        },
+        {
+          "@type": "Question",
+          "name": "Is StayRank AI's 'quiet' score a real decibel measurement?",
+          "acceptedAnswer": { "@type": "Answer", "text": "No honest per-hotel decibel data exists anywhere, so it isn't invented. The QUIET score is a disclosed estimate built from real signals (nearby nightlife venue count, nearby major roads, review text); the underlying counts themselves are shown as real facts, not folded into a single black-box number." }
+        }
+      ]
+    }
+    </script>
+  </head>
+  <body>
+    <header class="top">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">SR</span>
+        <strong>StayRank AI</strong>
+      </a>
+      <a class="backlink" href="/">&larr; Back to the app</a>
+    </header>
+
+    <div class="wrap">
+      <p class="breadcrumb"><a href="/">Home</a> &rsaquo; <a href="index.html">Guides</a> &rsaquo; Quiet hotels in Tokyo</p>
+      <p class="eyebrow">Tokyo &middot; Quiet + transit</p>
+      <h1>Quiet hotels in Tokyo that are still near a subway station</h1>
+      <p class="dek">"Quiet" and "central" usually fight each other in Tokyo - the neighborhoods with the best subway access are often the loudest at night. Here's how to actually check both at once, using real counts instead of a marketing adjective.</p>
+
+      <h2>Why this is hard to search for normally</h2>
+      <p>Most booking sites let you sort by "distance to center" or show a guest-rating number, but neither tells you whether a specific hotel is next to a nightlife strip or a quiet office block. A 9.2 rating can hide "great service, terrible street noise" just as easily as it hides nothing at all - the rating doesn't separate the two.</p>
+
+      <h2>What to check instead</h2>
+      <p>Every hotel on StayRank AI shows two real, separate facts rather than one blended score:</p>
+      <div class="card">
+        <p style="margin-bottom:10px;"><strong>Nearest transit</strong> - the real named station (subway or rail) and walking distance, pulled live from OpenStreetMap's Overpass API. Not "5 min to transit" with no station named - an actual stop you can look up yourself.</p>
+        <p style="margin-bottom:0;"><strong>Noise context</strong> - a real count of nightlife venues (bars, clubs) and major roads within a short radius of the hotel, also from OpenStreetMap. Labeled "likely quiet" or "likely lively" based on those counts, with the raw numbers shown - never a made-up decibel figure.</p>
+      </div>
+
+      <h2>Neighborhoods to start with</h2>
+      <div class="neighborhood-grid">
+        <div class="neighborhood-row">
+          <div><strong>Kanda / Otemachi</strong><span class="tag good">Usually quiet</span></div>
+          <p>Central business district - two subway lines within 5 minutes of most hotels here, low nightlife density. The tradeoff is smaller, efficiency-focused rooms.</p>
+        </div>
+        <div class="neighborhood-row">
+          <div><strong>Ueno / Okachimachi</strong><span class="tag good">Usually quiet</span></div>
+          <p>Close to Ueno Station's many lines, with a residential/park character rather than a nightlife strip - Ueno Park sits right there too.</p>
+        </div>
+        <div class="neighborhood-row">
+          <div><strong>Shinjuku</strong><span class="tag caution">Check noise context first</span></div>
+          <p>Some of the best transit access in the city, but also home to Kabukicho's nightlife district - noise varies block by block, so check the individual hotel's noise context rather than assuming.</p>
+        </div>
+      </div>
+
+      <div class="cta-card">
+        <strong>See real quiet + transit data for Tokyo hotels right now</strong>
+        <p style="margin: 6px 0 0;">Opens the live app with "quiet" already set as a priority for Tokyo.</p>
+        <a class="cta-button" href="/?city=Tokyo&prompt=quiet%20hotel%20near%20a%20subway%20station&filter=quiet">Search quiet Tokyo hotels &rarr;</a>
+      </div>
+
+      <h2>Common questions</h2>
+      <details>
+        <summary>How can I find a quiet hotel in Tokyo that's still near a subway station?</summary>
+        <p>Search with "quiet" as a priority and check the noise context on each hotel's detail page - it shows a real count of nearby nightlife venues and major roads, plus the real named nearest station and walking distance, so you can weigh both facts yourself.</p>
+      </details>
+      <details>
+        <summary>Is the "quiet" score a real decibel measurement?</summary>
+        <p>No honest per-hotel decibel data exists anywhere, so it isn't invented. It's a disclosed estimate built from real nightlife/road counts - and those underlying counts are shown to you as real facts, not hidden inside one black-box number.</p>
+      </details>
+
+      <h2>Related guides</h2>
+      <ul class="related">
+        <li><a href="wheelchair-accessible-hotels-london.html">Wheelchair-accessible hotels in London (verified, not assumed)</a></li>
+        <li><a href="pet-friendly-hotels-kyoto.html">Pet-friendly hotels in Kyoto with no hidden fee surprises</a></li>
+        <li><a href="../methodology.html">How the full ranking formula works</a></li>
+      </ul>
+
+      <footer class="note">
+        Part of StayRank AI's guides on searching for a hotel by what actually matters to you, using real, checkable data. See the <a href="index.html">full guide index</a> or <a href="../methodology.html">the scoring methodology</a>.
+      </footer>
+    </div>
+  </body>
+</html>

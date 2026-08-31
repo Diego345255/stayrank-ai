@@ -1,0 +1,16 @@
+1
+00:00:00,100 --> 00:00:02,258
+Traveling somewhere with a different currency?
+
+2
+00:00:02,208 --> 00:00:10,864
+StayRank AI converts every price using today's real exchange rate, straight from the European Central Bank, never a stale or made up number.
+
+3
+00:00:10,864 --> 00:00:12,232
+StayRank AI.
+
+4
+00:00:12,232 --> 00:00:14,260
+Real rates, updated daily.
+

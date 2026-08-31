@@ -1,0 +1,20 @@
+1
+00:00:00,100 --> 00:00:01,940
+Traveling with a dog or cat?
+
+2
+00:00:01,890 --> 00:00:03,942
+Just flip the pet friendly filter.
+
+3
+00:00:03,942 --> 00:00:10,828
+StayRank AI only keeps hotels with a real, listed pet policy, straight from the listing, never guessed.
+
+4
+00:00:10,828 --> 00:00:12,196
+StayRank AI.
+
+5
+00:00:12,196 --> 00:00:13,859
+Pet friendly, for real.
+

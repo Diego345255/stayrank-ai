@@ -1,0 +1,20 @@
+1
+00:00:00,100 --> 00:00:03,661
+Tired of clicking through a dozen filters just to find one hotel?
+
+2
+00:00:03,611 --> 00:00:05,062
+Just describe your trip.
+
+3
+00:00:05,062 --> 00:00:09,555
+StayRank AI reads it, and ranks real hotels to match, instantly.
+
+4
+00:00:09,555 --> 00:00:10,923
+StayRank AI.
+
+5
+00:00:10,923 --> 00:00:13,564
+Describe your trip, not just filters.
+

@@ -1,0 +1,20 @@
+1
+00:00:00,100 --> 00:00:02,494
+Need a hotel near one specific place?
+
+2
+00:00:02,444 --> 00:00:03,930
+Just type the landmark.
+
+3
+00:00:03,930 --> 00:00:10,722
+StayRank AI shows real walking distance and time to every hotel, using real routing, not a straight line guess.
+
+4
+00:00:10,722 --> 00:00:12,090
+StayRank AI.
+
+5
+00:00:12,090 --> 00:00:14,743
+Real distance, to the place that matters.
+

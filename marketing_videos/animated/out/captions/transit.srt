@@ -1,0 +1,16 @@
+1
+00:00:00,100 --> 00:00:02,859
+Tired of a vague transit score with no context?
+
+2
+00:00:02,809 --> 00:00:11,217
+StayRank AI shows the real, named nearest station, subway or rail, with a real distance, not just a number out of a hundred.
+
+3
+00:00:11,217 --> 00:00:12,585
+StayRank AI.
+
+4
+00:00:12,585 --> 00:00:14,567
+The real station, by name.
+

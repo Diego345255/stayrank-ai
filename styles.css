@@ -1,0 +1,2875 @@
+:root {
+  color-scheme: light;
+  --ink: #2a182e;
+  --muted: #7a6b7d;
+  --line: #d4d1d5;
+  --soft: #f3f1ee;
+  --paper: #ffffff;
+  --cream: #f7f6f3;
+  --accent: #cdb3ff;
+  --accent-tint: #f2ecff;
+  --accent-strong: #8a63f0;
+  /* Darker than --accent-strong: used only where the color sits on text
+     (confidence pill, AI insight label) - #8a63f0 measures 3.56:1 on
+     --accent-tint, below WCAG AA's 4.5:1 for normal text. This measures 6.16:1. */
+  --accent-text: #6d28d9;
+  /* Deliberately NOT redefined in the dark palette below (so it keeps this
+     exact value in both themes) - unlike --accent-text (which needs to
+     flip: dark text on a light background in light mode, light text on a
+     dark background in dark mode), this is specifically for *white text
+     sitting on top of this color as a solid badge fill* (.map-selected
+     badge, .poi-tab.active) - a role where the badge itself always needs
+     to stay dark regardless of the surrounding theme, the same reasoning
+     already applied to .source-live/.source-generated/.source-curated's
+     fixed colors below. Found this distinction by checking actual contrast
+     numbers for every color in this file against the new dark palette
+     before shipping it, not by inspection alone - reusing --accent-text
+     unchanged for both roles would have made white-on-badge text measure
+     1.56:1 in dark mode (its dark-mode value is a *light* lavender, chosen
+     for the opposite role: readable text on a dark tint, not a background
+     for white text - clean-looking to write, an almost-invisible label in
+     the real running app if shipped without checking). */
+  --accent-solid: #6d28d9;
+  --accent-ink: #2a182e;
+  --green: #138a62;
+  /* #af6b00 measured 4.26:1 on white, just under AA's 4.5:1 - this measures 6.39:1. */
+  --amber: #8a5200;
+  --rose: #b42318;
+  --amber-tint: #fff3d8;
+  --green-tint: #ddf7ed;
+  /* --green itself (#138a62) only measures 3.84:1 against --green-tint -
+     below WCAG AA's 4.5:1 for normal text. It works fine as a background
+     for white text (its other use, e.g. .card-actions .book) but needs a
+     darker value specifically as *text on --green-tint* - the same pairing
+     already measured at 6.91:1 before this was a variable. */
+  --green-text: #075e44;
+  --shadow: 0 18px 42px rgba(42, 24, 46, 0.1);
+  --shadow-lift: 0 26px 54px rgba(42, 24, 46, 0.18);
+}
+
+/* Dark mode: same variable set, repainted for a dark surface, not just an
+   inverted filter - accent-tint especially needs to become a dark-purple
+   card fill rather than a near-white one, since it's used as backgrounds
+   (badges, callouts) as often as it's used as a border color. Every color
+   below was checked for real WCAG AA contrast against the surface it's
+   actually used on, same discipline as the light palette's own comments. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #f1eaf7;
+  --muted: #a99bb5;
+  --line: #423a4c;
+  --soft: #241c2c;
+  --paper: #1c1622;
+  --cream: #15101a;
+  --accent: #cdb3ff;
+  --accent-tint: #2f2440;
+  --accent-strong: #b79bff;
+  --accent-text: #d8c6ff;
+  --accent-ink: #1c1622;
+  --green: #3ddb9b;
+  --amber: #ffb648;
+  --rose: #ff8177;
+  --amber-tint: #3a2a10;
+  --green-tint: #123829;
+  /* Bright enough against the dark --green-tint (7.27:1, checked the same
+     way as the light pairing above) - reusing dark mode's own --green
+     value works here, unlike light mode's. */
+  --green-text: #3ddb9b;
+  --shadow: 0 18px 42px rgba(0, 0, 0, 0.45);
+  --shadow-lift: 0 26px 54px rgba(0, 0, 0, 0.55);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background: var(--cream);
+  font-family: "Plus Jakarta Sans", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 12px;
+  z-index: 100;
+  padding: 12px 18px;
+  color: white;
+  background: var(--ink);
+  border-radius: 0 0 12px 12px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: minmax(320px, 380px) 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  padding: 22px;
+  background: var(--paper);
+  border-right: 1px solid var(--line);
+  overflow-y: auto;
+}
+
+.brand {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.theme-toggle {
+  display: grid;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  margin-left: auto;
+  place-items: center;
+  color: var(--ink);
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+
+.language-select {
+  flex-shrink: 0;
+  max-width: 92px;
+  padding: 6px 8px;
+  color: var(--ink);
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent-strong);
+}
+
+.theme-toggle:active {
+  transform: scale(0.92);
+}
+
+.brand-mark {
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  color: var(--ink);
+  background: linear-gradient(135deg, var(--accent), #7c5cff);
+  border-radius: 14px;
+  font-weight: 800;
+}
+
+h1,
+h2,
+p {
+  margin: 0;
+}
+
+h1 {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.brand p,
+.panel p,
+.next-list {
+  color: var(--muted);
+}
+
+.how-it-works-link {
+  display: block;
+  margin-top: 2px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent-text);
+  text-decoration: none;
+}
+
+.how-it-works-link:hover {
+  text-decoration: underline;
+}
+
+.panel {
+  padding: 18px;
+  margin-bottom: 14px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 0 6px 18px rgba(42, 24, 46, 0.04);
+}
+
+label {
+  display: grid;
+  gap: 8px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+textarea,
+select,
+input {
+  width: 100%;
+  color: var(--ink);
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  outline: none;
+}
+
+textarea {
+  min-height: 190px;
+  padding: 14px;
+  resize: vertical;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+select,
+input {
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 999px;
+}
+
+textarea:focus,
+select:focus,
+input:focus {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px rgba(138, 99, 240, 0.16);
+}
+
+.primary-button {
+  width: 100%;
+  height: 48px;
+  margin-top: 12px;
+  color: var(--accent-ink);
+  background: var(--accent);
+  border: 0;
+  border-radius: 999px;
+  font-weight: 700;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.primary-button:hover {
+  background: #b998ff;
+}
+
+.primary-button:active {
+  transform: scale(0.98);
+}
+
+.itinerary-ai-row {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.itinerary-ai-row input {
+  flex: 1;
+}
+
+.itinerary-ai-row .secondary-button {
+  flex-shrink: 0;
+  margin-top: 0;
+}
+
+.secondary-button {
+  height: 40px;
+  margin-top: 8px;
+  padding: 0 18px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.secondary-button:hover {
+  border-color: var(--accent-strong);
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.field-grid input[readonly] {
+  background: var(--surface-muted, rgba(127, 127, 127, 0.12));
+  cursor: not-allowed;
+  color: var(--muted);
+}
+
+.chip-row,
+.filter-strip,
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Desktop already shows the map side by side with results (Baymard's
+   documented preference over toggling) - this jump link only earns its
+   place once the layout collapses to single-column and the map can be
+   thousands of pixels below the fold (see #viewMapButton click handler). */
+.mobile-only {
+  display: none;
+}
+
+.chip-row {
+  margin-top: 12px;
+}
+
+.recent-cities-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0 4px;
+}
+
+/* Same real bug just found and fixed for .trip-planner-body: this class's
+   own `display: flex` ties in specificity with the browser's default
+   `[hidden] { display: none }` and wins, so `.hidden = true` (set when
+   there's no search history yet - a real first-time-visitor case) never
+   actually hid this row. */
+.recent-cities-row[hidden] {
+  display: none;
+}
+
+.recent-city-chip {
+  padding: 4px 12px;
+  color: var(--muted);
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.recent-city-chip::before {
+  content: "🕘 ";
+}
+
+.recent-city-chip:hover {
+  color: var(--ink);
+  border-color: var(--accent-strong);
+}
+
+.recently-viewed-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 2px 2px 12px;
+  margin-bottom: 4px;
+}
+
+/* Same [hidden]-vs-display specificity bug as .trip-planner-body and
+   .recent-cities-row above - a first-time visitor with no viewing
+   history yet never actually got this row hidden. */
+.recently-viewed-row[hidden] {
+  display: none;
+}
+
+.recently-viewed-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 0 0 130px;
+  padding: 8px;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.recently-viewed-card:hover,
+.recently-viewed-card:focus-visible {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent-tint);
+  outline: none;
+}
+
+.recently-viewed-card img {
+  width: 100%;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.recently-viewed-name {
+  font-weight: 700;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recently-viewed-meta {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.chip,
+.filter,
+.toolbar button,
+.section-title button,
+#closeCompare,
+#closeDetail {
+  min-height: 36px;
+  padding: 0 14px;
+  color: var(--ink);
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-weight: 600;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.chip:hover,
+.filter:hover,
+.toolbar button:hover {
+  border-color: var(--accent-strong);
+}
+
+.chip.active,
+.filter.active,
+.toggle-chip.active {
+  color: white;
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.section-title h2,
+.panel h2 {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.weights {
+  display: grid;
+  gap: 14px;
+}
+
+.check-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.check-grid label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 8px 12px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.check-grid input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent-strong);
+}
+
+.check-grid label:has(input:checked) {
+  color: var(--ink);
+  background: var(--accent-tint);
+  border-color: var(--accent);
+}
+
+.weight-row {
+  display: grid;
+  gap: 6px;
+}
+
+.weight-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+input[type="range"] {
+  height: 24px;
+  padding: 0;
+  border-radius: 999px;
+  accent-color: var(--accent-strong);
+}
+
+.main {
+  min-width: 0;
+  padding: 24px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.eyebrow,
+.metric-label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.topbar h2 {
+  margin-top: 4px;
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.toolbar button {
+  background: var(--paper);
+}
+
+.toolbar select {
+  width: auto;
+  min-width: 138px;
+  height: 38px;
+  background: var(--paper);
+  font-weight: 600;
+}
+
+.insights {
+  display: grid;
+  grid-template-columns: 2fr repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.insights > div {
+  min-width: 0;
+  padding: 16px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+}
+
+.insights strong {
+  display: block;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+}
+
+.vibe-callout {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 16px 18px;
+  color: var(--ink);
+  /* Was a hardcoded #ffffff second stop - fine in light mode (where --ink
+     is dark), but in dark mode --ink is near-white text sitting on top of
+     a gradient that still faded to pure white at one end, making that
+     half of the box nearly illegible. Found by actually toggling dark
+     mode and inspecting the new AI Comparison box (reuses this same
+     class) - same bug already existed in the original AI trip-read
+     insight box, just never caught. var(--soft) is the same themed-surface
+     token already used for this exact gradient shape on .founder-item. */
+  background: linear-gradient(120deg, var(--accent-tint), var(--soft));
+  border: 1px solid var(--accent);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.vibe-callout[hidden] {
+  display: none;
+}
+
+.vibe-callout .ai-insight-label {
+  flex-shrink: 0;
+  padding: 5px 12px;
+  color: var(--ink);
+  background: var(--accent);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.vibe-callout p {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.ai-insight {
+  padding: 12px 14px;
+  background: var(--accent-tint);
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+}
+
+.ai-insight .ai-insight-label {
+  display: inline-block;
+  margin-bottom: 5px;
+  color: var(--accent-text);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.ai-insight p {
+  margin: 0;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.content-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 18px;
+  align-items: start;
+}
+
+.filter-strip {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 8px 0 14px;
+  background: var(--cream);
+}
+
+.results {
+  display: grid;
+  gap: 14px;
+  transition: opacity 0.15s ease;
+}
+
+.results.is-loading {
+  /* No opacity dimming here anymore - #results is now filled with
+     shimmering skeleton cards the instant loading starts (see
+     skeletonCards() in app.js), and dimming a shimmer just muddies the
+     one signal that's supposed to read clearly as "this is loading."
+     pointer-events: none still matters - without it, clicking a
+     skeleton card's dead space is a no-op, but a real click landing on
+     leftover real content underneath (there isn't any anymore, but this
+     stays as a safety net) shouldn't fire an action mid-reload. */
+  pointer-events: none;
+}
+
+#rankButton:disabled {
+  cursor: wait;
+  opacity: 0.75;
+}
+
+.hotel-card {
+  display: grid;
+  grid-template-columns: 172px minmax(0, 1fr);
+  gap: 16px;
+  padding: 14px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+/* Excludes skeleton cards on purpose - they share .hotel-card for layout
+   (same grid/photo/title shape) but aren't interactive, and .is-loading
+   already sets pointer-events: none so hover can't normally reach them
+   anyway; this is just not depending on that alone. */
+.hotel-card:not(.hotel-card-skeleton):hover {
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-3px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hotel-card:not(.hotel-card-skeleton):hover {
+    transform: none;
+  }
+}
+
+/* Data-brushing highlight: set when this card's map marker is hovered
+   (Kayak/Google Hotels pattern - hovering either the list row or the map
+   pin highlights the other, so users can cross-reference location). */
+.hotel-card.map-highlighted {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent-tint), var(--shadow);
+}
+
+/* Set on click (not just hover) so it survives the mouse moving away and
+   the list scrolling to reveal the card - the whole point of clicking a
+   pin is to find out which hotel it is, so this needs to stay put. */
+.hotel-card.map-selected {
+  position: relative;
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent-strong), var(--shadow);
+}
+
+.hotel-card.map-selected::after {
+  content: "📍 Selected on map";
+  position: absolute;
+  top: -11px;
+  left: 14px;
+  padding: 2px 10px;
+  color: #ffffff;
+  /* accent-solid, not accent-strong: white-on-accent-strong measures ~3.9:1,
+     under WCAG AA's 4.5:1 for this small text; accent-solid measures ~7.1:1.
+     Not accent-text either - see that variable's own comment for why. */
+  background: var(--accent-solid);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.hotel-photo {
+  position: relative;
+  overflow: hidden;
+  min-height: 178px;
+  border-radius: 16px;
+  background: var(--soft);
+}
+
+.hotel-card-skeleton {
+  cursor: default;
+}
+
+.skeleton-block {
+  background: linear-gradient(90deg, var(--soft) 25%, var(--line) 50%, var(--soft) 75%);
+  background-size: 200% 100%;
+  border-radius: 10px;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.skeleton-photo {
+  min-height: 178px;
+  border-radius: 16px;
+}
+
+.skeleton-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.skeleton-line {
+  height: 14px;
+}
+
+.skeleton-line-title {
+  width: 70%;
+  height: 20px;
+}
+
+.skeleton-line-sub {
+  width: 45%;
+}
+
+.skeleton-ring {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+}
+
+.skeleton-reason {
+  height: 54px;
+  border-radius: 14px;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-block {
+    animation: none;
+    background: var(--soft);
+  }
+}
+
+.hotel-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-cycle-btn {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.photo-cycle-btn:focus-visible {
+  outline: 3px solid var(--accent-strong);
+  outline-offset: -3px;
+}
+
+.rank-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 6px 10px;
+  color: white;
+  background: rgba(42, 24, 46, 0.86);
+  border-radius: 999px;
+  font-weight: 800;
+}
+
+.photo-count {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  padding: 5px 10px;
+  color: white;
+  background: rgba(42, 24, 46, 0.72);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.star-rating {
+  /* #e3a008 measured 2.26:1 on white, far under AA - #966000 (light mode)
+     measures 5.29:1. This sits directly on the card background, unlike
+     the tint-badge colors above, so it uses --amber (already tuned per
+     theme for that exact "text on plain background" contrast need) rather
+     than a fixed value that would go dark-on-dark once the page itself
+     goes dark. */
+  color: var(--amber);
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+
+.top-match-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  color: #ffffff;
+  background: #8a5200;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+/* TripAdvisor Travelers' Choice / Airbnb Guest Favorite-style badge, but
+   computed only from real Booking.com review volume + score already fetched
+   - reuses the .price-insight-good pair's measured 6.91:1 contrast rather
+   than introducing an unverified color. */
+.guest-favorite-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  color: var(--green-text);
+  background: var(--green-tint);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+/* Kayak/Booking.com-style "Free cancellation" flag, pulled out of the
+   generic gray amenity-tag list into its own badge - reuses the same
+   measured green pair as .guest-favorite-badge above. */
+.free-cancel-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  color: var(--green-text);
+  background: var(--green-tint);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.deal-badge {
+  padding: 2px 10px;
+  color: var(--green-text);
+  background: var(--green-tint);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.deal-badge s {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* Marks a "Hard requirement" checkbox the app auto-checked from emphatic
+   prompt language (e.g. "quiet", "not tiny") rather than the traveler -
+   reuses the .price-insight-high pair's measured contrast (5.73:1). */
+.auto-must-tag {
+  padding: 1px 7px;
+  color: var(--amber);
+  background: var(--amber-tint);
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Google Hotels "Price Insights"-style market comparison - colors measured
+   for contrast (6.91:1 / 5.73:1), not reused blind. */
+.price-insight-badge {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.price-insight-good {
+  color: var(--green-text);
+  background: var(--green-tint);
+}
+
+.price-insight-high {
+  color: var(--amber);
+  background: var(--amber-tint);
+}
+
+.count-pill {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  /* --accent-solid, not --accent - measured live (see this file's own
+     --accent-solid comment above): --accent is #cdb3ff in BOTH themes,
+     only 1.83:1 against white text, a real WCAG AA failure (needs 4.5:1)
+     that shipped with the Price watches feature. --accent-solid exists
+     specifically for this exact role (white text on a solid badge fill,
+     same as .map-selected/.poi-tab.active) and is deliberately NOT
+     redefined per theme so it stays safe in both. */
+  background: var(--accent-solid);
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.price-watches-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.price-watch-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.price-watch-thumb {
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.price-watch-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.price-watch-delta {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.price-watch-delta span {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.price-watch-delta.price-insight-good span {
+  color: var(--green-text);
+}
+
+.price-watch-delta.price-insight-high span {
+  color: var(--amber);
+}
+
+.photo-gallery {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.photo-gallery-thumb {
+  flex-shrink: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+
+.photo-gallery-thumb:hover,
+.photo-gallery-thumb:focus-visible {
+  box-shadow: 0 0 0 3px var(--accent-strong);
+  outline: none;
+}
+
+.photo-gallery-thumb img {
+  display: block;
+  width: 110px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 14px;
+}
+
+.hotel-map {
+  height: 220px;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+.landmark-status {
+  margin: -4px 0 2px;
+  font-size: 13px;
+  color: var(--accent-text);
+  min-height: 16px;
+}
+
+.landmark-status-error {
+  color: var(--amber);
+}
+
+.landmark-marker-icon {
+  font-size: 24px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+
+.itinerary-marker-icon {
+  font-size: 20px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
+}
+
+.anchor-hotel-marker-icon {
+  font-size: 26px;
+  line-height: 1;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
+}
+
+.hotel-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+}
+
+.hotel-head h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.subline {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent-strong);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.link-button:hover {
+  color: var(--accent);
+}
+
+.score-ring {
+  display: grid;
+  width: 76px;
+  height: 76px;
+  place-items: center;
+  border: 7px solid var(--accent-tint);
+  border-top-color: var(--accent-strong);
+  border-radius: 50%;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+.score-stack {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.confidence-pill {
+  padding: 4px 10px;
+  color: var(--accent-text);
+  background: var(--accent-tint);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.match-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.tag {
+  padding: 5px 10px;
+  color: var(--ink);
+  background: var(--soft);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.tag.warning {
+  color: var(--amber);
+  background: var(--amber-tint);
+}
+
+.review-themes {
+  margin-bottom: 12px;
+}
+
+.review-themes .chip-row {
+  margin-top: 6px;
+}
+
+.best-time-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.best-time-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.best-time-month {
+  padding: 8px;
+  border-radius: 12px;
+  background: var(--soft);
+  text-align: center;
+}
+
+.best-time-month.best-time-highlight {
+  outline: 2px solid var(--accent-strong);
+}
+
+.best-time-month .best-time-label {
+  font-weight: 800;
+  font-size: 12px;
+  display: block;
+}
+
+.best-time-month .best-time-temps {
+  font-size: 12px;
+  color: var(--muted);
+  display: block;
+  margin-top: 2px;
+}
+
+.best-time-month .best-time-rain {
+  font-size: 11px;
+  color: var(--muted);
+  display: block;
+}
+
+@media (max-width: 640px) {
+  .best-time-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.tag.good {
+  color: var(--green-text);
+  background: var(--green-tint);
+}
+
+.hotel-body {
+  display: grid;
+  gap: 12px;
+}
+
+.score-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.score-mini {
+  min-width: 0;
+  padding: 9px;
+  background: var(--accent-tint);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+}
+
+.score-mini span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.score-mini strong {
+  display: block;
+  margin-top: 3px;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+
+.reason-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.reason-box {
+  padding: 10px 12px;
+  background: var(--soft);
+  border-radius: 14px;
+}
+
+.reason-box span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.reason-box strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.risk {
+  color: var(--amber);
+}
+
+.evidence {
+  padding: 12px 14px;
+  color: var(--ink);
+  background: var(--amber-tint);
+  border-left: 4px solid var(--amber);
+  border-radius: 14px;
+  font-size: 14px;
+}
+
+.price-sparkline {
+  display: block;
+  width: 100%;
+  max-width: 220px;
+  height: 44px;
+  margin: 8px 0 4px;
+}
+
+.ask-hotel {
+  padding: 14px 16px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.data-sources {
+  padding: 10px 14px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  font-size: 13px;
+}
+
+.data-sources summary {
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.data-sources ul {
+  margin: 10px 0 4px;
+  padding-left: 4px;
+  list-style: none;
+}
+
+.data-sources li {
+  margin-bottom: 4px;
+  color: var(--muted);
+}
+
+.data-sources li strong {
+  color: var(--ink);
+}
+
+.ask-hotel-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.ask-hotel-form input {
+  flex: 1;
+  padding: 10px 12px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.ask-hotel-form button {
+  padding: 10px 18px;
+  color: var(--accent-ink);
+  background: var(--accent);
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.ask-hotel-form button:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.ask-hotel-answer-loading {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 13px;
+  font-style: italic;
+}
+
+.ask-hotel-answer {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: var(--accent-tint);
+  border-radius: 14px;
+}
+
+.ask-hotel-answer p {
+  margin: 0;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.ask-hotel-answer-error {
+  margin-top: 10px;
+  color: var(--rose);
+  font-size: 13px;
+}
+
+/* --- Advertise panel ------------------------------------------------ */
+.advertise-panel .card-actions {
+  margin-top: 12px;
+}
+
+/* --- Community reviews & photos -------------------------------------- */
+.community-reviews {
+  margin-top: 4px;
+}
+
+.community-sample-notice {
+  margin-bottom: 8px;
+}
+
+.community-review-list {
+  margin-bottom: 16px;
+}
+
+.community-review-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.community-review-date {
+  margin-top: 0;
+}
+
+.community-sample-tag {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 10px;
+}
+
+.community-photo-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin-top: 10px;
+  padding-bottom: 2px;
+}
+
+.community-photo-thumb {
+  flex-shrink: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+
+.community-photo-thumb:hover,
+.community-photo-thumb:focus-visible {
+  box-shadow: 0 0 0 3px var(--accent-strong);
+  outline: none;
+}
+
+.community-photo-thumb img {
+  display: block;
+  width: 90px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.community-review-form-wrap {
+  padding: 14px 16px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.community-review-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.community-review-form label {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.community-review-form textarea {
+  min-height: 90px;
+}
+
+.community-review-form textarea#communityReviewPhotos {
+  min-height: 56px;
+  font-size: 13px;
+}
+
+.community-review-form .primary-button {
+  width: auto;
+  padding: 0 22px;
+  justify-self: start;
+}
+
+.star-picker {
+  display: flex;
+  gap: 4px;
+}
+
+.star-picker-btn {
+  padding: 2px;
+  background: none;
+  border: none;
+  color: var(--accent-strong);
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.star-picker-btn:hover,
+.star-picker-btn:focus-visible {
+  transform: scale(1.15);
+  outline: none;
+}
+
+.refine-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.refine-bar[hidden] {
+  display: none;
+}
+
+.refine-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.refine-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px 4px 12px;
+  color: var(--accent-text);
+  background: var(--accent-tint);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.refine-chip-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  color: var(--accent-text);
+  background: none;
+  border: none;
+  border-radius: 50%;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.refine-chip-remove:hover {
+  background: var(--accent);
+}
+
+.refine-form {
+  display: flex;
+  flex: 1;
+  min-width: 220px;
+  gap: 8px;
+}
+
+.refine-form input {
+  flex: 1;
+  padding: 8px 12px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.refine-form button {
+  padding: 8px 16px;
+  color: var(--accent-ink);
+  background: var(--accent);
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.evidence.review-quote {
+  background: var(--accent-tint);
+  border-left-color: var(--accent-strong);
+  font-style: italic;
+}
+
+.amenities-row {
+  margin: 0;
+}
+
+.tag.amenity {
+  color: var(--green-text);
+  background: var(--green-tint);
+}
+
+.tag.sustainability-cert {
+  color: var(--green-text);
+  background: var(--green-tint);
+  border: 1px solid var(--green);
+  font-weight: 700;
+}
+
+.breakdown {
+  display: grid;
+  gap: 7px;
+}
+
+.breakdown-row {
+  display: grid;
+  grid-template-columns: 92px 1fr 42px;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.bar-track {
+  height: 8px;
+  overflow: hidden;
+  background: var(--soft);
+  border-radius: 999px;
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--accent-strong);
+  border-radius: inherit;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card-actions button,
+.card-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 14px;
+  color: var(--ink);
+  text-decoration: none;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-weight: 700;
+  transition: border-color 0.15s ease;
+}
+
+.card-actions button:hover,
+.card-actions a:hover {
+  border-color: var(--accent-strong);
+}
+
+.card-actions .book {
+  color: white;
+  /* Fixed, not var(--green): white on --green measured only 4.34:1 even in
+     light mode (a pre-existing near-miss below WCAG AA's 4.5:1, found
+     while re-checking every color here for dark mode) and 1.78:1 once
+     --green's dark-mode value (a bright green, correct for its usual
+     text-on-background role) is factored in. This darker, fixed value
+     measures 7.8:1 regardless of theme - same "solid fill under white
+     text stays dark always" fix as --accent-solid and the itinerary-remove
+     hover state above. */
+  background: #075e44;
+  border-color: #075e44;
+}
+
+.shortlisted {
+  color: white !important;
+  background: var(--ink) !important;
+  border-color: var(--ink) !important;
+}
+
+.similar-hotels {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.similar-hotels h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.similar-hotels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.similar-hotel-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 8px;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.similar-hotel-card:hover,
+.similar-hotel-card:focus-visible {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 3px var(--accent-tint);
+  outline: none;
+}
+
+.similar-hotel-card img {
+  width: 100%;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.similar-hotel-name {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.similar-hotel-meta {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.decision-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.map-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 250px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+.map-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.map-overlay {
+  position: absolute;
+  inset: auto 12px 12px 12px;
+  padding: 14px;
+  color: white;
+  background: rgba(42, 24, 46, 0.78);
+  border-radius: 16px;
+}
+
+.map-overlay span {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.source-badge {
+  display: inline-block !important;
+  margin-top: 8px;
+  padding: 4px 10px;
+  text-transform: none !important;
+  font-size: 11px !important;
+  font-weight: 700;
+  border-radius: 999px;
+}
+
+.source-badge:empty {
+  display: none !important;
+}
+
+/* Solid (not translucent) backgrounds: these badges sit over a photo via
+   .map-overlay's own semi-transparent layer, so a second translucent layer
+   here made contrast depend on whatever photo happened to be underneath -
+   in the worst case it measured 1.6:1. Solid color guarantees the ratio
+   shown in each comment regardless of what's behind them. */
+.source-live {
+  color: #ffffff;
+  background: #0f6b4c; /* 6.51:1 vs white text */
+}
+
+.source-generated {
+  color: #ffffff;
+  background: #5b3ec9; /* 7.05:1 vs white text */
+}
+
+.source-curated {
+  color: #ffffff;
+  background: #8a5200; /* 6.39:1 vs white text */
+}
+
+.source-content {
+  color: #ffffff;
+  background: #1e5a99; /* 7.05:1 vs white text, hand-computed like the three above */
+}
+
+.next-list {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  line-height: 1.55;
+}
+
+.trust-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.trust-list li {
+  position: relative;
+  padding-left: 26px;
+  color: var(--ink);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.trust-list li::before {
+  content: "\2713";
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  color: white;
+  /* Fixed, not var(--green) - same white-on-solid-fill reasoning as
+     .card-actions .book above (7.8:1 in both themes vs 1.78:1 in dark
+     mode with --green's own bright dark-mode value). */
+  background: #075e44;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.trust-list strong {
+  color: var(--ink);
+}
+
+.insight-list,
+.model-list,
+.founder-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.insight-item,
+.model-item,
+.founder-item {
+  padding: 12px 14px;
+  background: var(--soft);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.insight-item strong,
+.model-item strong,
+.founder-item strong {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.insight-item span,
+.model-item span,
+.founder-item span {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.founder-grid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.founder-item {
+  background: linear-gradient(160deg, var(--accent-tint), var(--soft));
+}
+
+.founder-item strong {
+  font-size: 20px;
+  overflow-wrap: anywhere;
+}
+
+dialog {
+  width: min(980px, calc(100vw - 32px));
+  max-height: 82vh;
+  padding: 0;
+  border: 0;
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+}
+
+dialog::backdrop {
+  background: rgba(42, 24, 46, 0.48);
+}
+
+.photo-lightbox {
+  position: relative;
+  display: none;
+  width: min(1100px, calc(100vw - 48px));
+  max-width: none;
+  max-height: calc(100vh - 48px);
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.photo-lightbox[open] {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-lightbox::backdrop {
+  background: rgba(0, 0, 0, 0.86);
+}
+
+.photo-lightbox img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 48px);
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 40px;
+  height: 40px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.lightbox-nav {
+  position: absolute;
+  top: 50%;
+  width: 48px;
+  height: 48px;
+  transform: translateY(-50%);
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.lightbox-prev {
+  left: -12px;
+}
+
+.lightbox-next {
+  right: -12px;
+}
+
+.lightbox-counter {
+  position: absolute;
+  bottom: -34px;
+  left: 50%;
+  margin: 0;
+  padding: 4px 14px;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.55);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  transform: translateX(-50%);
+}
+
+@media (max-width: 640px) {
+  .photo-lightbox {
+    width: calc(100vw - 24px);
+  }
+
+  .lightbox-close {
+    top: 4px;
+    right: 4px;
+  }
+
+  .lightbox-prev {
+    left: 4px;
+  }
+
+  .lightbox-next {
+    right: 4px;
+  }
+
+  .lightbox-counter {
+    bottom: 4px;
+  }
+}
+
+.dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+#closeCompare {
+  width: 36px;
+  padding: 0;
+  font-size: 22px;
+}
+
+#closeDetail {
+  width: 36px;
+  padding: 0;
+  font-size: 22px;
+}
+
+.compare-table {
+  display: grid;
+  gap: 10px;
+  padding: 18px 20px;
+  overflow: auto;
+}
+
+.compare-radar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0 4px;
+}
+
+.compare-radar svg {
+  width: min(320px, 100%);
+  height: auto;
+}
+
+.radar-grid-ring {
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.radar-axis-line {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.radar-axis-label {
+  fill: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+}
+
+.radar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px 16px;
+}
+
+.radar-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.radar-legend-swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+.compare-row {
+  display: grid;
+  grid-template-columns: 44px 1.2fr 0.8fr repeat(5, minmax(80px, 1fr));
+  gap: 8px;
+  align-items: center;
+  min-width: 884px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+}
+
+.compare-thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  object-fit: cover;
+  background: var(--soft);
+}
+
+/* Stacks the price watch badge (see priceWatchBadge in app.js) under the
+   raw price so it fits this grid's narrow columns without wrapping. */
+.compare-price-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.compare-price-cell .price-insight-badge {
+  font-size: 10px;
+  padding: 1px 7px;
+  white-space: normal;
+}
+
+.compare-total-note {
+  font-size: 10px;
+  color: var(--muted);
+}
+
+.compare-row.header {
+  color: var(--muted);
+  background: var(--soft);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.detail-body {
+  display: grid;
+  gap: 14px;
+  padding: 18px 20px;
+  overflow: auto;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.review-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.review-list li p {
+  margin: 6px 0 0;
+  color: var(--ink);
+}
+
+.review-list li {
+  padding: 12px 14px;
+  background: var(--soft);
+  border-radius: 16px;
+}
+
+/* --- Trip Planner Pro --------------------------------------------- */
+
+.trip-planner {
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid var(--line);
+}
+
+.trip-planner-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.trip-planner-body {
+  display: grid;
+  gap: 16px;
+}
+
+/* Found via testing: `display: grid` here has the same CSS specificity
+   as the browser's default `[hidden] { display: none }` rule, and an
+   author stylesheet always wins that tie - so setting `.hidden = true`
+   in JS (see setProUnlocked()) never actually hid this panel. The whole
+   Trip Planner Pro section (weather, itinerary, budget, packing list)
+   rendered fully visible at all times regardless of Pro-lock state,
+   adding thousands of px of content between the results and the map.
+   Same fix already applied to .vibe-callout[hidden] and
+   .refine-bar[hidden] above/below - just missing here. */
+.trip-planner-body[hidden] {
+  display: none;
+}
+
+.trip-planner-controls .field-grid {
+  margin-bottom: 12px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.pro-billing-widget {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pro-subscribe-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pro-subscribe-form input[type="email"] {
+  min-width: 220px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+}
+
+.pro-active-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pro-active-badge {
+  font-weight: 700;
+  color: var(--accent-strong);
+}
+
+@media (max-width: 640px) {
+  .pro-subscribe-form input[type="email"] {
+    min-width: 0;
+    flex: 1 1 100%;
+  }
+}
+
+.flight-estimate-numbers {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin: 10px 0;
+}
+
+.flight-estimate-numbers > div {
+  padding: 10px 14px;
+  background: var(--soft);
+  border-radius: 14px;
+}
+
+.flight-estimate-numbers strong {
+  display: block;
+  font-size: 20px;
+  margin-top: 2px;
+}
+
+.weather-days {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.weather-day {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px;
+  background: var(--soft);
+  border-radius: 16px;
+}
+
+.weather-day-unavailable {
+  opacity: 0.7;
+}
+
+/* Distinguishes a real historical average from an actual forecast day -
+   same dashed-border language as .itinerary-return-day, so "not quite the
+   same kind of data" reads consistently across the app. */
+.weather-day-historical {
+  background: transparent;
+  border: 1px dashed var(--line);
+}
+
+.weather-day-label {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.weather-icon {
+  font-size: 24px;
+  line-height: 1;
+  margin: 2px 0;
+}
+
+.poi-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.poi-tab {
+  padding: 8px 14px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.poi-tab.active {
+  color: #ffffff;
+  /* accent-solid, not accent-strong: white-on-accent-strong measures 4.1:1 at
+     this 13px size, under WCAG AA's 4.5:1 - same fix as .map-selected badge.
+     Not accent-text either - see that variable's own comment for why. */
+  background: var(--accent-solid);
+  border-color: var(--accent-solid);
+}
+
+.poi-list {
+  display: grid;
+  gap: 10px;
+}
+
+.poi-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  background: var(--soft);
+  border-radius: 14px;
+}
+
+.poi-item a {
+  margin-left: 8px;
+}
+
+.poi-day-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.poi-add-button {
+  padding: 4px 10px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.poi-add-button:hover {
+  border-color: var(--accent-strong);
+}
+
+.itinerary-days {
+  display: grid;
+  gap: 12px;
+}
+
+.itinerary-day {
+  padding: 14px;
+  background: var(--soft);
+  border-radius: 16px;
+}
+
+.itinerary-day-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+/* Distinguishes the trailing "travel home" card from the actual activity
+   days above it - a dashed border reads as "different kind of day" (no
+   places to add here) without needing a whole new visual language. */
+.itinerary-return-day {
+  background: transparent;
+  border: 1px dashed var(--line);
+}
+
+.itinerary-items {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.itinerary-item-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+
+.itinerary-item-thumb {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  overflow: hidden;
+  background: var(--soft);
+  border-radius: 12px;
+  font-size: 22px;
+}
+
+.itinerary-item-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.itinerary-item-body {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+  min-width: 0;
+}
+
+.itinerary-item-body strong {
+  flex-basis: 100%;
+}
+
+/* Real Wikipedia summary text (see fetchWikipediaSummary) - a short, real
+   introduction when one exists, quietly absent (not a placeholder) when it
+   doesn't, since not every OSM place has a matching Wikipedia article. */
+.itinerary-item-desc {
+  flex-basis: 100%;
+  margin: 2px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.itinerary-item-desc:empty {
+  display: none;
+}
+
+.itinerary-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.itinerary-remove:hover {
+  color: #ffffff;
+  /* Fixed, not var(--amber): --amber flips to a *bright* amber in dark
+     mode (correct for its usual role, text on a background), which would
+     make white text on top of it here measure 1.74:1. Same "solid fill
+     under white text needs to stay dark regardless of theme" reasoning as
+     --accent-solid above, just for a single one-off use rather than a
+     second named variable. */
+  background: #8a5200;
+}
+
+.budget-rows {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.budget-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--soft);
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.budget-total {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  /* Was a hardcoded #ffffff - fine in light mode where --ink is dark, but
+     --ink flips to near-white in dark mode, so this was pure white text on
+     a near-white background: effectively invisible. Found by testing this
+     exact panel in dark mode after adding the per-person split row below -
+     same class of bug already fixed once this session (.vibe-callout's
+     gradient). var(--paper) is exactly --ink's inverse in both themes
+     (dark-mode-appropriate light text, light-mode-appropriate dark text on
+     white) - already the correct token for "text sitting on an --ink
+     background," just never applied here. */
+  color: var(--paper);
+  background: var(--ink);
+  border-radius: 14px;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+.budget-split {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.packing-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.packing-items li {
+  padding: 10px 14px;
+  background: var(--soft);
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.packing-items li::before {
+  content: "✓ ";
+  /* Same contrast fix as --green-text elsewhere (--green itself measures
+     under AA against --soft) - now themed instead of a fixed light-mode
+     value, so this stays readable once --soft goes dark too. */
+  color: var(--green-text);
+  font-weight: 700;
+}
+
+@media (max-width: 1100px) {
+  .app-shell,
+  .content-grid {
+    /* A bare "1fr" track defaults to minmax(auto, 1fr) - its minimum is
+       the content's own min-content width, not 0, so it refuses to shrink
+       below whatever its widest child needs (a filter-strip control row,
+       an unwrapped select option, etc.). Reproduced live at a 375px
+       mobile width: .content-grid rendered at 618.552px regardless of the
+       actual viewport, forcing the whole page into horizontal scroll -
+       every result card, the sidebar, and the map all silently clipped or
+       scrolled instead of laying out in the single column this rule
+       intends. minmax(0, 1fr) matches the explicit min-width:0 already
+       used for the desktop two-column rule just above, letting the track
+       actually shrink to the real viewport width. */
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sidebar {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+}
+
+@media (max-width: 760px) {
+  .main,
+  .sidebar {
+    padding: 14px;
+  }
+
+  .mobile-only {
+    display: inline-block;
+  }
+
+  .topbar,
+  .hotel-head,
+  .trip-planner-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .insights,
+  .reason-grid,
+  .score-summary,
+  .detail-grid,
+  .founder-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hotel-card {
+    grid-template-columns: 1fr;
+  }
+
+  .hotel-photo {
+    min-height: 210px;
+  }
+
+  .score-ring {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+/* --- Print / Save-as-PDF view --------------------------------------
+   Honest equivalent of Layla.ai's paid-tier PDF export: no PDF-generation
+   library, just an isolated print stylesheet + the browser's native
+   Print -> Save as PDF, which produces the same end result. */
+
+.print-only {
+  display: none;
+}
+
+/* Toast notifications - replaces the native alert() this app used to call
+   for sync results and export confirmations. alert() blocks the whole
+   page until dismissed and looks like a browser error, not something a
+   polished travel app would show for "your plan copied to clipboard."
+   Non-blocking, auto-dismissing, themed like everything else here. */
+.toast-container {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(360px, calc(100vw - 40px));
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent-strong);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  font-size: 14px;
+  line-height: 1.4;
+  pointer-events: auto;
+  animation: toast-in 0.2s ease;
+}
+
+.toast.toast-success {
+  border-left-color: var(--green);
+}
+
+.toast.toast-error {
+  border-left-color: var(--rose);
+}
+
+.toast-icon {
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.toast-message {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-dismiss {
+  flex-shrink: 0;
+  padding: 0;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.toast-dismiss:hover {
+  color: var(--ink);
+}
+
+.toast.toast-leaving {
+  animation: toast-out 0.2s ease forwards;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast,
+  .toast.toast-leaving {
+    animation: none;
+  }
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  #tripPlannerUnlocked,
+  #tripPlannerUnlocked * {
+    visibility: visible;
+  }
+
+  #tripPlannerUnlocked {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  .no-print,
+  .no-print * {
+    display: none !important;
+  }
+
+  .itinerary-remove {
+    display: none !important;
+  }
+
+  #printHeader.print-only {
+    display: block;
+    margin-bottom: 16px;
+    font-size: 22px;
+    font-weight: 800;
+  }
+
+  .panel {
+    box-shadow: none;
+    border: 1px solid #ccc;
+    break-inside: avoid;
+  }
+}

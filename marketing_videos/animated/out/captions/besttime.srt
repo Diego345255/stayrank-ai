@@ -1,0 +1,16 @@
+1
+00:00:00,100 --> 00:00:02,022
+Wondering when to actually visit?
+
+2
+00:00:01,972 --> 00:00:12,491
+StayRank AI shows three years of real historical weather, month by month, and calls out the mildest, driest month, no fake crowd score, no fake price score.
+
+3
+00:00:12,491 --> 00:00:13,859
+StayRank AI.
+
+4
+00:00:13,859 --> 00:00:15,923
+Real weather, month by month.
+

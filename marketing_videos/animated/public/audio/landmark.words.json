@@ -1,0 +1,27 @@
+[
+  {
+    "text": "Need a hotel near one specific place?",
+    "startMs": 100.0,
+    "endMs": 2493.868
+  },
+  {
+    "text": "Just type the landmark.",
+    "startMs": 2443.868,
+    "endMs": 3929.7171
+  },
+  {
+    "text": "StayRank AI shows real walking distance and time to every hotel, using real routing, not a straight line guess.",
+    "startMs": 3929.7171,
+    "endMs": 10722.1702
+  },
+  {
+    "text": "StayRank AI.",
+    "startMs": 10722.1703,
+    "endMs": 12090.0949
+  },
+  {
+    "text": "Real distance, to the place that matters.",
+    "startMs": 12090.0949,
+    "endMs": 14743.3969
+  }
+]

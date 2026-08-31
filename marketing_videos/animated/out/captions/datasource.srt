@@ -1,0 +1,16 @@
+1
+00:00:00,100 --> 00:00:02,765
+What happens when a hotel data source goes down?
+
+2
+00:00:02,715 --> 00:00:11,206
+StayRank AI automatically falls back to another real source, so you still get real hotels, never fabricated data, never a fake listing.
+
+3
+00:00:11,206 --> 00:00:12,574
+StayRank AI.
+
+4
+00:00:12,574 --> 00:00:15,404
+Real data, even when one source fails.
+

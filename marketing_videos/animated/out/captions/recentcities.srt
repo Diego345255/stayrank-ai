@@ -1,0 +1,16 @@
+1
+00:00:00,100 --> 00:00:01,904
+Planning a multi city trip?
+
+2
+00:00:01,854 --> 00:00:09,944
+StayRank AI remembers every city you've actually searched, so you can jump back in with one tap, never a fabricated trending list.
+
+3
+00:00:09,944 --> 00:00:11,312
+StayRank AI.
+
+4
+00:00:11,312 --> 00:00:13,694
+Recently searched, one tap back.
+

@@ -1,0 +1,22 @@
+[
+  {
+    "text": "What happens when a hotel data source goes down?",
+    "startMs": 100.0,
+    "endMs": 2765.0944
+  },
+  {
+    "text": "StayRank AI automatically falls back to another real source, so you still get real hotels, never fabricated data, never a fake listing.",
+    "startMs": 2715.0944,
+    "endMs": 11205.6608
+  },
+  {
+    "text": "StayRank AI.",
+    "startMs": 11205.6609,
+    "endMs": 12573.5855
+  },
+  {
+    "text": "Real data, even when one source fails.",
+    "startMs": 12573.5855,
+    "endMs": 15403.7743
+  }
+]

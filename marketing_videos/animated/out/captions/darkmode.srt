@@ -1,0 +1,16 @@
+1
+00:00:00,100 --> 00:00:02,305
+Dark mode that's actually readable?
+
+2
+00:00:02,255 --> 00:00:11,548
+StayRank AI checks every single color for real contrast, badges and buttons included, not just inverted colors that look clean but read terribly.
+
+3
+00:00:11,548 --> 00:00:12,916
+StayRank AI.
+
+4
+00:00:12,916 --> 00:00:15,003
+Every color, contrast checked.
+

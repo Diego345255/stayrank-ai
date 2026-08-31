@@ -1,0 +1,27 @@
+[
+  {
+    "text": "Wish you could just ask the hotel a question?",
+    "startMs": 100.0,
+    "endMs": 2340.5661
+  },
+  {
+    "text": "StayRank AI answers, grounded only in that hotel's own real data.",
+    "startMs": 2290.5661,
+    "endMs": 6641.9814
+  },
+  {
+    "text": "If it doesn't know, it says so, it never guesses.",
+    "startMs": 6641.9814,
+    "endMs": 9790.5664
+  },
+  {
+    "text": "StayRank AI.",
+    "startMs": 9790.5665,
+    "endMs": 11158.4911
+  },
+  {
+    "text": "Ask this hotel anything.",
+    "startMs": 11158.4911,
+    "endMs": 13127.8308
+  }
+]

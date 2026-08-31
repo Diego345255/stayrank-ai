@@ -1,0 +1,27 @@
+[
+  {
+    "text": "Still guessing which neighborhood to stay in?",
+    "startMs": 100.0,
+    "endMs": 2293.3963
+  },
+  {
+    "text": "StayRank AI lets you pick the exact neighborhood, not just the city, narrowing real hotels instantly.",
+    "startMs": 2243.3963,
+    "endMs": 8587.7362
+  },
+  {
+    "text": "StayRank AI.",
+    "startMs": 8587.7363,
+    "endMs": 9955.6609
+  },
+  {
+    "text": "Pick the exact neighborhood.",
+    "startMs": 9955.6609,
+    "endMs": 11559.4345
+  },
+  {
+    "text": "Not just the city.",
+    "startMs": 11559.4345,
+    "endMs": 13092.4534
+  }
+]

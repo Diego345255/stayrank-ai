@@ -1,0 +1,20 @@
+1
+00:00:00,100 --> 00:00:03,190
+Ever wonder if that hotel price is actually a good deal?
+
+2
+00:00:03,140 --> 00:00:07,220
+StayRank AI quietly tracks the real price, every time you look.
+
+3
+00:00:07,220 --> 00:00:10,864
+No predictions, no spam, just what actually changed.
+
+4
+00:00:10,864 --> 00:00:12,232
+StayRank AI.
+
+5
+00:00:12,232 --> 00:00:14,779
+Real price tracking, zero spam.
+

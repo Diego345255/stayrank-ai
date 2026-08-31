@@ -1,0 +1,27 @@
+[
+  {
+    "text": "Worried about handing over your card number?",
+    "startMs": 100.0,
+    "endMs": 2163.6793
+  },
+  {
+    "text": "Trip Planner Pro uses real Stripe hosted checkout.",
+    "startMs": 2113.6793,
+    "endMs": 5285.8492
+  },
+  {
+    "text": "StayRank AI never sees your card number, ever, and you can cancel anytime from your own billing portal.",
+    "startMs": 5285.8493,
+    "endMs": 11311.793
+  },
+  {
+    "text": "StayRank AI.",
+    "startMs": 11311.793,
+    "endMs": 12679.7176
+  },
+  {
+    "text": "Secure billing, real Stripe checkout.",
+    "startMs": 12679.7176,
+    "endMs": 15120.7554
+  }
+]

@@ -1,0 +1,20 @@
+1
+00:00:00,100 --> 00:00:03,190
+Wish you could just say cheaper, or closer to the station?
+
+2
+00:00:03,140 --> 00:00:04,012
+Type it.
+
+3
+00:00:04,012 --> 00:00:09,814
+StayRank AI re-ranks the same real hotels instantly, no new fetch, no fake results.
+
+4
+00:00:09,814 --> 00:00:11,182
+StayRank AI.
+
+5
+00:00:11,182 --> 00:00:14,260
+Refine in plain English, instantly re-ranked.
+

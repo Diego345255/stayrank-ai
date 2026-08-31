@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+data/hotels.db
+data/hotelbeds_destinations_cache.json
+data/circuit_breaker_state.json
+.env
+
+# Brainstorming visual-companion session files (mockups/state) - local only
+.superpowers/
+
+# Vendored npm dependencies - never version-controlled, regenerate with npm install
+node_modules/

@@ -1,0 +1,20 @@
+1
+00:00:00,100 --> 00:00:02,600
+Ever wonder why a hotel is ranked number one?
+
+2
+00:00:02,550 --> 00:00:05,793
+At StayRank AI, that's never a paid placement.
+
+3
+00:00:05,793 --> 00:00:11,217
+It's the highest score from our own transparent model, and you can inspect every weight behind it.
+
+4
+00:00:11,217 --> 00:00:12,585
+StayRank AI.
+
+5
+00:00:12,585 --> 00:00:14,519
+Every ranking, explainable.
+

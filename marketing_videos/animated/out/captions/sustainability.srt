@@ -1,0 +1,16 @@
+1
+00:00:00,100 --> 00:00:03,237
+Wondering if a hotel's eco badge is actually earned?
+
+2
+00:00:03,187 --> 00:00:10,946
+StayRank AI only shows real, third party certifications, like Green Key or EarthCheck, never a made up eco score.
+
+3
+00:00:10,946 --> 00:00:12,314
+StayRank AI.
+
+4
+00:00:12,314 --> 00:00:14,920
+Real certifications, never invented.
+

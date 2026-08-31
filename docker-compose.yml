@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    restart: unless-stopped
+    ports:
+      # Bound to localhost only - the host's own nginx terminates TLS on
+      # 80/443 and reverse-proxies here (8081, since 8080 is already used
+      # by the math-reader deployment on this same VPS).
+      - "127.0.0.1:8081:80"
+    depends_on:
+      - backend

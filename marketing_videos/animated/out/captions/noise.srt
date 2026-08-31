@@ -1,0 +1,16 @@
+1
+00:00:00,100 --> 00:00:03,060
+Wondering if a hotel is actually quiet at night?
+
+2
+00:00:03,010 --> 00:00:11,229
+StayRank AI checks real nearby nightlife venues and major roads, and labels it likely quiet or likely lively, no vibe guessing.
+
+3
+00:00:11,229 --> 00:00:12,597
+StayRank AI.
+
+4
+00:00:12,597 --> 00:00:15,168
+Quiet or lively, actually checked.
+

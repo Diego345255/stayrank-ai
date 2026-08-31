@@ -1,0 +1,16 @@
+1
+00:00:00,100 --> 00:00:02,376
+Tired of generic packing list apps?
+
+2
+00:00:02,326 --> 00:00:10,404
+StayRank AI builds yours from the real forecast for your actual trip, real UV index, real rain chance, real low temperature.
+
+3
+00:00:10,404 --> 00:00:11,772
+StayRank AI.
+
+4
+00:00:11,772 --> 00:00:14,413
+A packing list, built from real weather.
+

@@ -1,0 +1,16 @@
+1
+00:00:00,100 --> 00:00:03,131
+Traveling abroad shouldn't mean a translation app too.
+
+2
+00:00:03,081 --> 00:00:10,522
+Search hotels in English, Spanish, French, German, Portuguese, or Chinese, fully translated.
+
+3
+00:00:10,522 --> 00:00:11,890
+StayRank AI.
+
+4
+00:00:11,890 --> 00:00:14,213
+Search hotels in six languages.
+

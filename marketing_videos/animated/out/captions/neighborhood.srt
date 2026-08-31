@@ -1,0 +1,20 @@
+1
+00:00:00,100 --> 00:00:02,293
+Still guessing which neighborhood to stay in?
+
+2
+00:00:02,243 --> 00:00:08,588
+StayRank AI lets you pick the exact neighborhood, not just the city, narrowing real hotels instantly.
+
+3
+00:00:08,588 --> 00:00:09,956
+StayRank AI.
+
+4
+00:00:09,956 --> 00:00:11,559
+Pick the exact neighborhood.
+
+5
+00:00:11,559 --> 00:00:13,092
+Not just the city.
+
